@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Slide Navbar</title>
+    <!-- <link rel="stylesheet" type="text/css" href="slide navbar style.css"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main">
+        <input type="checkbox" id="chk" aria-hidden="true">
+
+        <div class="signup">
+            <div class="alert alert-success" role="alert" *ngIf="responseMessage">{{responseMessage}}</div>
+            <label for="chk" aria-hidden="true">Sign up</label>
+            <form [formGroup]="signupForm" (ngSubmit)="signUp()">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" formControlName="firstname" class="form-control" placeholder="firstname" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" formControlName="lastname" class="form-control" placeholder="lastname" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" formControlName="contact" class="form-control" placeholder="contact" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="email" formControlName="email" class="form-control" placeholder="email" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="password" formControlName="password" class="form-control" placeholder="password" />
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button [disabled]="loading" class="btn btn-primary">
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                            Register
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="login">
+            <!-- <div class="alert alert-success" role="alert" *ngIf="responseMessage">{{responseMessage}}</div> -->
+            <form [formGroup]="signinForm" (ngSubmit)="signIn()">
+                <label for="chk" aria-hidden="true">Login</label>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="email" formControlName="email" class="form-control" placeholder="email" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="password" formControlName="password" class="form-control" placeholder="password" />
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button [disabled]="loading" class="btn btn-primary"> <span *ngIf="loading"
+                                class="spinner-border spinner-border-sm mr-1"></span>Sign In</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
