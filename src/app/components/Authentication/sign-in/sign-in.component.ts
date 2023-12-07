@@ -10,7 +10,6 @@ import { AuthService } from '@core/services/auth.service';
 })
 export class SignInComponent implements OnInit {
 
-    signupForm!: UntypedFormGroup;
     signinForm!: UntypedFormGroup;
     submitted = false;
     loading = false;
@@ -21,14 +20,6 @@ export class SignInComponent implements OnInit {
         private route: ActivatedRoute,) { }
 
     ngOnInit(): void {
-
-        this.signupForm = this.formBuilder.group({
-            firstname: ['', Validators.required],
-            lastname: ['', Validators.required],
-            contact: ['', Validators.required],
-            email: ['', Validators.required],
-            password: ['', [Validators.required, Validators.minLength(6)]]
-        });
 
         this.signinForm = this.formBuilder.group({
             email: ['', Validators.required],
@@ -46,36 +37,16 @@ export class SignInComponent implements OnInit {
                     this.responseMessage = result.error.message;
                 } else if (result.success == true) {
                     this.responseMessage = result.successmessage;
+                    console.log(result)
                     localStorage.setItem('token', result['token'])
-                    // localStorage.setItem('user-data', result['user']);
+                    localStorage.setItem('user_data', JSON.stringify(result['user']));
                     localStorage.setItem('userId', result['user']['id'])
                     localStorage.setItem('firstname', result['user']['firstname'])
                     localStorage.setItem('lastname', result['user']['lastname'])
                     localStorage.setItem('email', result['user']['email'])
                     localStorage.setItem('contact', result['user']['contact'])
-                    this.router.navigate(["/dashboard"]);
+                    this.router.navigate(["/chat"]);
                     this.signinForm.reset();
-                }
-            })
-    }
-
-    signUp() {
-        this.submitted = true;
-        console.log(this.signupForm.value);
-        var endPoint = 'signup'
-        this.auth.sendRequest('post', endPoint, this.signupForm.value)
-            .subscribe((result: any) => {
-                // this.auth.setLoader(false);
-                console.log(result);
-                if (result.success == false) {
-                    console.log(result);
-                } else if (result.success == true) {
-                    this.responseMessage = result.successmessage;
-                    this.signupForm.reset();
-                    setTimeout(() => {
-                        this.responseMessage = '';
-                        // this.router.navigate(['signin']);
-                    }, 3000);
                 }
             })
     }

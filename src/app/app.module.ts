@@ -9,13 +9,25 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { ChatComponent } from '@components/chat/chat/chat.component';
+import { NavbarComponent } from './components/shared/navbar/navbar.component';
+import { SidebarComponent } from './components/shared/sidebar/sidebar.component';
+import { LayoutComponent } from './components/shared/layout/layout.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ImagePreviewModalComponent } from './components/shared/image-preview-modal/image-preview-modal.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
     declarations: [
         AppComponent,
         SignUpComponent,
         SignInComponent,
+        ChatComponent,
         PageNotFoundComponent,
+        NavbarComponent,
+        SidebarComponent,
+        LayoutComponent,
+        ImagePreviewModalComponent,
     ],
     imports: [
         BrowserModule,
@@ -24,6 +36,8 @@ import { HttpClientModule } from '@angular/common/http';
         CommonModule,
         ReactiveFormsModule,
         HttpClientModule,
+        BrowserAnimationsModule,
+        MatDialogModule
     ],
     providers: [],
     bootstrap: [AppComponent]
