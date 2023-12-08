@@ -40,11 +40,14 @@ export class ChatComponent implements OnInit, OnDestroy {
     constructor(private route: ActivatedRoute, private auth: AuthService,
         private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
+
         this.socket = io(serverUrl);
+
         this.commonService.userDataEmitter.subscribe((data) => {
             this.receiverId = data.id;
             this.getUser(this.receiverId)
             this.getMessages();
+            // Handle the received data as needed
         });
     }
 
@@ -116,7 +119,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
 
     getMessages() {
-
         let dataObj = {
             senderId: this.senderId,
             receiverId: this.receiverId
@@ -186,22 +188,22 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     async sendMessage() {
         var chatData: any;
-        var endPoint: any;
+        var endPoint: any
+      var formData: any = new FormData();
 
-        this.chatType = 'single';
         if (this.chatType == 'single') {
             endPoint = 'chat/send-message'
-            chatData = {
-                message: this.chatForm.value.message,
-                receiverId: this.receiverId,
-                senderId: this.chatForm.value.senderId
-            }
-        } else if (this.chatType == 'group') {
-            endPoint = 'group/send-message'
-            chatData = {
-                message: this.chatForm.value.message,
-                groupId: this.chatForm.value.receiverId,
-                senderId: this.chatForm.value.senderId
+            // chatData = {
+            //     message: this.chatForm.value.message,
+            //     receiverId: this.receiverId,
+            //     senderId: this.chatForm.value.senderId
+            // }
+            formData.append("message", this.chatForm.value.message);
+            formData.append("receiverId", this.receiverId);
+            formData.append("senderId", this.chatForm.value.senderId);
+            if(this.selectedFile){
+              // chatData.file = this.selectedFile;
+              formData.append("files", this.selectedFile);
             }
         }
 
@@ -223,14 +225,12 @@ export class ChatComponent implements OnInit, OnDestroy {
                 if (result.success == false) {
 
                 } else if (result.success == true) {
+                  this.imageUrl = '';
+                  this.selectedFile = '';
                     if (this.chatType == 'single') {
                         this.socket.emit('user-message', chatData, (error: any) => { })
                         this.getMessages();
 
-                    } else if (this.chatType == 'group') {
-                        // Emit the message to the group
-                        this.socket.emit('group-message', chatData);
-                        this.getGroupMessages();
                     }
                     this.message = '';
                     this.chatForm.reset();
@@ -240,8 +240,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
 
     uploadFile(event: any) {
-        // this.chatForm.controls['message'].clearValidators();
-        // this.chatForm.controls['message'].updateValueAndValidity();
+        this.chatForm.controls['message'].clearValidators();
+        this.chatForm.controls['message'].updateValueAndValidity();
         const file: File = event.target['files'][0];
         this.selectedFile = file;
         if (this.selectedFile) {
@@ -271,9 +271,6 @@ export class ChatComponent implements OnInit, OnDestroy {
         };
         reader.readAsDataURL(this.selectedFile as Blob);
         // this.openImagePreview(this.selectedFile)
-        console.log(this.imageUrl);
-        console.log(this.selectedFile);
-
     }
 
     openImagePreview(imageUrl: string): void {

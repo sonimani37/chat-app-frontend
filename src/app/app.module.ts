@@ -25,6 +25,8 @@ import { getAnalytics } from "firebase/analytics";
 // Initialize Firebase
 const app = initializeApp(environment.firebase);
 const analytics = getAnalytics(app);
+import { GroupChatComponent } from './components/chat/group-chat/group-chat.component';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
     declarations: [
@@ -37,6 +39,7 @@ const analytics = getAnalytics(app);
         SidebarComponent,
         LayoutComponent,
         ImagePreviewModalComponent,
+        GroupChatComponent,
     ],
     imports: [
         BrowserModule,
@@ -48,6 +51,13 @@ const analytics = getAnalytics(app);
         BrowserAnimationsModule,
         MatDialogModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+        ToastrModule.forRoot({
+        timeOut: 2000,
+        disableTimeOut: false,
+        positionClass: 'toast-top-right',
+        preventDuplicates: true,
+        closeButton: true,
+      }),
     ],
     providers: [],
     bootstrap: [AppComponent]

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { ToastrMessagesService } from '@core/services/toastr-messages.service';
 
 @Component({
     selector: 'app-sign-in',
@@ -17,7 +18,7 @@ export class SignInComponent implements OnInit {
     response: any;
 
     constructor(private formBuilder: UntypedFormBuilder, private router: Router, private auth: AuthService,
-        private route: ActivatedRoute,) { }
+        private route: ActivatedRoute,private toastrMessage: ToastrMessagesService) { }
 
     ngOnInit(): void {
 
@@ -35,9 +36,10 @@ export class SignInComponent implements OnInit {
                 this.response = result;
                 if (result.success == false) {
                     this.responseMessage = result.error.message;
+                  this.toastrMessage.showError(this.responseMessage, null);
                 } else if (result.success == true) {
                     this.responseMessage = result.successmessage;
-                    console.log(result)
+                  this.toastrMessage.showSuccess(this.responseMessage, null);
                     localStorage.setItem('token', result['token'])
                     localStorage.setItem('user_data', JSON.stringify(result['user']));
                     localStorage.setItem('userId', result['user']['id'])

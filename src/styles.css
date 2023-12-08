@@ -2,3 +2,20 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.toast-top-right {
+  top: 73px !important;
+  right: 20px !important;
+}
+
+.toast-container .ngx-toastr {
+  height: auto !important;
+  padding: 31px 50px !important;
+  min-width: 300px;
+  width: auto;
+  line-height: 20px;
+}
+
+.toast-close-button {
+  top: 0;
+}

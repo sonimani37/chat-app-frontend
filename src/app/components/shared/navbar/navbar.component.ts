@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonService } from '@core/services/common.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,10 +9,14 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent {
   loginUserData: any;
-  constructor(public router: Router) { }
+  constructor(public router: Router, private commonService: CommonService) { }
 
   ngOnInit(): void {
     this.loginUserData = localStorage.getItem('user_data');
+  }
+
+  onMenuClick(selectedMenu:any){
+    this.commonService.sendMenuData(selectedMenu);
   }
 
   logout() {

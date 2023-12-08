@@ -1,6 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChatComponent } from '@components/chat/chat/chat.component';
 import { AuthService } from '@core/services/auth.service';
 import { CommonService } from '@core/services/common.service';
 
@@ -10,37 +9,44 @@ import { CommonService } from '@core/services/common.service';
     styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-    // @ViewChild(ReceiverComponent, { static: true }) receiverComponent!: ReceiverComponent;
-    @ViewChild(ChatComponent, { static: true}) chatComponent!:ChatComponent;
-
-    userId:any
-    allUsers: any[]=[];
+    userId: any
+    allUsers: any[] = [];
+    allGroups: any[] = [];
     today: any;
-    loginUser:any
+    loginUser: any
+    activeSingleClass: boolean = false;
+    activeGroupClass: boolean = false;
 
-    constructor(private auth: AuthService,private router: Router,private commonService: CommonService) { }
-
-    ngOnInit(): void {
+    constructor(private auth: AuthService, private router: Router, private commonService: CommonService) {
         this.userId = localStorage.getItem('userId');
-        this.today = new Date();
-        this.currentUser(this.userId);
-        this.getAllUsers();
-     }
+        let data: any = localStorage.getItem('user_data');
+        this.loginUser = JSON.parse(data)
+        if (this.router.url == '/chat'){
+          this.activeSingleClass = true;
+        } else if (this.router.url == '/group-chat'){
+          this.activeGroupClass = true;
+        }
 
-     currentUser(userId:any){
-        var endPoint = 'getUsers?id=' + userId
-        this.auth.sendRequest('get', endPoint, null).subscribe(
-            (result: any) => {
-                if (result.success == false) {
-                    console.log(result);
-                } else if (result.success == true) {
-                    // console.log(this.response);
-                    this.loginUser = result.user;
-                }
-            })
+        this.commonService.menupDataEmitter.subscribe((data) => {
+            if (data == 'singleChat') {
+                this.activeSingleClass = true;
+                this.activeGroupClass = false;
+                this.getAllUsers();
+            } else if (data == 'groupChat') {
+                this.activeGroupClass = true;
+                this.activeSingleClass = false;
+                this.getAllGroups();
+            }
+
+        });
     }
 
-     getAllUsers(){
+    ngOnInit(): void {
+      this.getAllUsers();
+      this.getAllGroups();
+    }
+
+    getAllUsers() {
         var endPoint = 'getUsers'
         this.auth.sendRequest('get', endPoint, null).subscribe(
             (result: any) => {
@@ -48,8 +54,9 @@ export class SidebarComponent {
                 if (result.success == false) {
                     console.log(result);
                 } else if (result.success == true) {
-                    result.user.forEach((element:any,index:any) => {
-                        if(element.id != this.userId){
+                  this.allUsers =[];
+                    result.user.forEach((element: any, index: any) => {
+                        if (element.id != this.userId) {
                             this.allUsers.push(element)
                         }
                     });
@@ -59,10 +66,36 @@ export class SidebarComponent {
             })
     }
 
-    selectedUser(userData:any){
-        this.commonService.sendUserData(userData)
-        // this.chatComponent?.selectUserData(userData);
+
+    getAllGroups() {
+        var endPoint = 'group'
+        this.auth.sendRequest('get', endPoint, null)
+            .subscribe((result: any) => {
+                if (result.success == false) {
+
+                } else if (result.success == true) {
+                    this.allGroups = [];
+                    this.allGroups = result.groups
+                    // result.group.user.forEach((element:any) => {
+                    //     if(element.id == this.userId){
+
+                    //     }
+                    // });
+                    this.selectedGroup(this.allGroups[0]);
+                }
+            });
     }
+
+    selectedUser(userData: any) {
+        this.commonService.sendUserData(userData)
+    }
+
+    selectedGroup(groupData: any) {
+        this.commonService.sendGroupData(groupData)
+    }
+    isValue: number = 0;
+
+    toggle(num: number) { this.isValue = num; }
 
     logout() {
         sessionStorage.clear();

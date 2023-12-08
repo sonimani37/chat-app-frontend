@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '@core/services/auth.service';
 // import { IDropdownSettings } from 'ng-multiselect-dropdown/multiselect.model';
-import { AuthenticationService } from 'src/app/Authentication/authentication.service';
+// import { AuthenticationService } from 'src/app/Authentication/authentication.service';
 
 @Component({
     selector: 'app-create-group',
@@ -35,13 +36,14 @@ export class CreateGroupComponent implements OnInit {
     constructor(private formBuilder: UntypedFormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private auth: AuthenticationService) {
+        private auth: AuthService
+        ) {
 
     }
 
     ngOnInit(): void {
         this.userId = localStorage.getItem('userId');
-        
+
         this.groupForm = this.formBuilder.group({
             name: ['', Validators.required],
             participants: ['', Validators.required],
@@ -64,7 +66,6 @@ export class CreateGroupComponent implements OnInit {
 
     createGroup() {
         this.submitted = true;
-        console.log(this.groupForm.value);
         // var endPoint = 'create-group';
         // this.auth.sendRequest('post', endPoint, this.groupForm.value)
         //     .subscribe((result: any) => {
@@ -88,8 +89,6 @@ export class CreateGroupComponent implements OnInit {
                 } else if (result.success == true) {
                     result.user.forEach((element:any) => {
                         if(element.id != this.userId){
-                            console.log(element);
-                            
                             this.allUsers.push(element)
                             // this.dropdownList.push({ item_id: val.id, item_text: val.name });
                             // if (this.positionList && this.positionList.length > 0) {
