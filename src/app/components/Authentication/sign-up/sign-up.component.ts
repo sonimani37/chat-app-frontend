@@ -33,14 +33,11 @@ export class SignUpComponent implements OnInit {
 
     signUp() {
         this.submitted = true;
-        console.log(this.signupForm.value);
         var endPoint = 'signup'
         this.auth.sendRequest('post', endPoint, this.signupForm.value)
             .subscribe((result: any) => {
                 // this.auth.setLoader(false);
-                console.log(result);
                 if (result.success == false) {
-                    console.log(result);
                 } else if (result.success == true) {
                     this.responseMessage = result.successmessage;
                     this.signupForm.reset();

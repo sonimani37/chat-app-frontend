@@ -140,7 +140,8 @@
                                                 <img [src]="getImageUrl(item.message)" alt="Image" width = 200px; height = 200px>
                                             </ng-container>
                                         </div>
-
+                                          <div class="sender-avatar">{{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
+                                          </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
                                     </div>
                                 </div>
@@ -154,10 +155,15 @@
                                                 <img [src]="getImageUrl(item.message)" alt="Image" width = 200px; height = 200px>
                                             </ng-container>
                                         </div>
+                                          <div class="sender-avatar">{{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
+                                          </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
                                     </div>
                                 </div>
                             </div>
+                              <div class="message me" *ngIf="imageUrl">
+                                <img [src]="imageUrl" alt="Uploaded Image" width="100px" height="100px">
+                              </div>
 
                             <!-- <div class="date">
                                 <hr>
@@ -232,9 +238,6 @@
                                 <button type="submit" class="btn send"><i class="material-icons">send</i></button>
                             </form>
                             <label>
-                                <div *ngIf="imageUrl">
-                                    <img [src]="imageUrl" alt="Uploaded Image">
-                                </div>
                                 <input type="file" (change)="uploadFile($event)">
                                 <span class="btn attach d-sm-block d-none"><i class="material-icons">attach_file</i></span>
                             </label>

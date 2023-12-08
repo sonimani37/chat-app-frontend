@@ -16,6 +16,8 @@ import { LayoutComponent } from './components/shared/layout/layout.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ImagePreviewModalComponent } from './components/shared/image-preview-modal/image-preview-modal.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { GroupChatComponent } from './components/chat/group-chat/group-chat.component';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
     declarations: [
@@ -28,6 +30,7 @@ import {MatDialogModule} from '@angular/material/dialog';
         SidebarComponent,
         LayoutComponent,
         ImagePreviewModalComponent,
+        GroupChatComponent,
     ],
     imports: [
         BrowserModule,
@@ -37,7 +40,14 @@ import {MatDialogModule} from '@angular/material/dialog';
         ReactiveFormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
-        MatDialogModule
+        MatDialogModule,
+        ToastrModule.forRoot({
+        timeOut: 2000,
+        disableTimeOut: false,
+        positionClass: 'toast-top-right',
+        preventDuplicates: true,
+        closeButton: true,
+      }),
     ],
     providers: [],
     bootstrap: [AppComponent]
