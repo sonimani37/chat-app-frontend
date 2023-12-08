@@ -1,0 +1,37 @@
+{
+    "gcm_sender_id": "78282463498",
+    "name": "Conversa Connect",
+    "short_name": "conversa",
+    "description": "Conversa connect chat app",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#007bff",
+    "icons": [
+      {
+        "src": "assets/money.png",
+        "sizes": "72x72",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/money.png",
+        "sizes": "96x96",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/money.png",
+        "sizes": "144x144",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/money.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/money.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }

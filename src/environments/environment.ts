@@ -3,7 +3,18 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  firebase: {
+    apiKey: "AIzaSyAY5_vlLDJT-VTpmEs5qHtAuN9tnJGXsoc",
+    authDomain: "conversa-connect.firebaseapp.com",
+    projectId: "conversa-connect",
+    storageBucket: "conversa-connect.appspot.com",
+    messagingSenderId: "407063494215",
+    appId: "1:407063494215:web:752aa6feebb71c3d277b62",
+    measurementId: "G-3JDCL55L1G",
+    vapidKey: "BB81DKObRgnmN6xghCrRlvv3NykQLwgDtX4Av_iJMJPPrf_VChXoTrPk8yjNDS06Qb5qHdvGQ97J5BI_bjq_g5k"
+  },
+  fcmUrl: 'https://fcm.googleapis.com/fcm/send'
 };
 
 export const baseUrl = 'http://localhost:7000/api/';

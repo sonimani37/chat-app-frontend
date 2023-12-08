@@ -5,9 +5,10 @@ import { ImagePreviewModalComponent } from '@components/shared/image-preview-mod
 import { AuthService } from '@core/services/auth.service';
 import { CommonService } from '@core/services/common.service';
 import { io, Socket } from "socket.io-client";
-import { serverUrl } from 'src/environments/environment';
+import { environment, serverUrl } from 'src/environments/environment';
 import { imagePath } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 
 @Component({
@@ -33,18 +34,17 @@ export class ChatComponent implements OnInit, OnDestroy {
     message: string = '';
     imageUrl: any;
     selectedFile: any;
-    imagePath:any = imagePath
+    imagePath: any = imagePath
+    currentFcmToken: any;
 
     constructor(private route: ActivatedRoute, private auth: AuthService,
-         private commonService: CommonService,private dialog: MatDialog,
+        private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
         this.socket = io(serverUrl);
         this.commonService.userDataEmitter.subscribe((data) => {
             this.receiverId = data.id;
             this.getUser(this.receiverId)
             this.getMessages();
-            console.log(this.receiverId);
-            // Handle the received data as needed
         });
     }
 
@@ -59,7 +59,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
         // Example: Listen for chatMessage events from the server
         this.socket.on('chatMessage', (message: any) => {
-            this.getMessages();
+           this.getMessages();
         });
 
         // this.route.queryParams.subscribe(params => {
@@ -91,8 +91,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
 
     getUser(userId: any) {
-        console.log(userId);
-
         var endPoint = 'getUsers?id=' + userId
         this.auth.sendRequest('get', endPoint, null)
             .subscribe((result: any) => {
@@ -100,7 +98,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
                 } else if (result.success == true) {
                     this.selectedUser = result.user;
-                    console.log(this.selectedUser);
                     this.receiverId = this.selectedUser.id;
                 }
             });
@@ -119,7 +116,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
 
     getMessages() {
-        console.log(this.receiverId);
 
         let dataObj = {
             senderId: this.senderId,
@@ -147,7 +143,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
                         }
                     });
-                    console.log(this.previousMsgs);
                 }
             })
     }
@@ -189,10 +184,9 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     }
 
-    sendMessage() {
+    async sendMessage() {
         var chatData: any;
         var endPoint: any;
-        console.log(this.chatForm.value);
 
         this.chatType = 'single';
         if (this.chatType == 'single') {
@@ -210,7 +204,19 @@ export class ChatComponent implements OnInit, OnDestroy {
                 senderId: this.chatForm.value.senderId
             }
         }
-        console.log(chatData);
+
+
+
+        const messaging = getMessaging();
+
+        await getToken(messaging, { vapidKey: environment.firebase.vapidKey })
+            .then((currentToken) => {
+                if (currentToken) {
+                    chatData.fcmToken = currentToken;
+                }
+            })
+
+
 
         this.auth.sendRequest('post', endPoint, chatData).subscribe(
             (result: any) => {
@@ -272,9 +278,9 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     openImagePreview(imageUrl: string): void {
         this.dialog.open(ImagePreviewModalComponent, {
-          data: { imageUrl },
+            data: { imageUrl },
         });
-      }
+    }
 
     // previewImage(id: number, image: string) {
     //     this.viewImage[id] = true;

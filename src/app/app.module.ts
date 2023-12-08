@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,7 +15,16 @@ import { SidebarComponent } from './components/shared/sidebar/sidebar.component'
 import { LayoutComponent } from './components/shared/layout/layout.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ImagePreviewModalComponent } from './components/shared/image-preview-modal/image-preview-modal.component';
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '@env/environment';
+
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+// Initialize Firebase
+const app = initializeApp(environment.firebase);
+const analytics = getAnalytics(app);
 
 @NgModule({
     declarations: [
@@ -37,7 +46,8 @@ import {MatDialogModule} from '@angular/material/dialog';
         ReactiveFormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
-        MatDialogModule
+        MatDialogModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     ],
     providers: [],
     bootstrap: [AppComponent]
