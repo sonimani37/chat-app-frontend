@@ -3,6 +3,9 @@
         <div class="start">
             <div class="container">
                 <div class="col-md-12">
+                          <div class="alert alert-success" role="alert" *ngIf="responseMessage">
+                            {{responseMessage}}
+                          </div>
                     <div class="content">
                         <h1>Sign in to Conversa Connect</h1>
                         <div class="third-party">
@@ -21,12 +24,14 @@
                             <div class="form-group">
                                 <input type="email" formControlName="email" class="form-control" placeholder="email" />
                                 <button class="btn icon"><i class="material-icons">mail_outline</i></button>
-                            </div>
+                                <div class="" *ngIf="submitted ||signinForm.controls['email'].errors && signinForm.controls['email'].touched">email is required.</div>
+                              </div>
                             <div class="form-group">
                                 <input type="password" formControlName="password" class="form-control"
                                     placeholder="password" />
                                 <button class="btn icon"><i class="material-icons">lock_outline</i></button>
-                            </div>
+                                <div class="" *ngIf="submitted ||signinForm.controls['password'].errors && signinForm.controls['password'].touched">password is required.</div>
+                              </div>
                             <button type="submit" class="btn button">Sign In</button>
                             <div class="callout">
                                 <span>Don't have account? <a [routerLink]="['/sign-up']"

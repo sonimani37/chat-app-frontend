@@ -18,39 +18,41 @@
                                     <i class="material-icons">whatshot</i>
                                 </button>
                             </div>
+                            <div class="alert alert-success" role="alert" *ngIf="responseMessage">
+                              {{responseMessage}}
+                            </div>
                             <p>or use your email for registration:</p>
-                            <form [formGroup]="signupForm" (ngSubmit)="signUp()">
-                                <div class="form-group">
-                                    <input type="text" formControlName="firstname" class="form-control"
-                                        placeholder="firstname" />
-                                    <button class="btn icon"><i class="material-icons">person_outline</i></button>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" formControlName="lastname" class="form-control"
-                                        placeholder="lastname" />
-                                    <button class="btn icon"><i class="material-icons">person_outline</i></button>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" formControlName="contact" class="form-control"
-                                        placeholder="contact" />
-                                    <button class="btn icon"><i class="material-icons">person_outline</i></button>
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" formControlName="email" class="form-control"
-                                        placeholder="email" />
-                                    <button class="btn icon"><i class="material-icons">mail_outline</i></button>
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" formControlName="password" class="form-control"
-                                        placeholder="password" />
-                                    <button class="btn icon"><i class="material-icons">lock_outline</i></button>
-                                </div>
-                                <button type="submit" class="btn button">Sign Up</button>
-                                <div class="callout">
-                                    <span>Already a member? <a [routerLink]="['/sign-in']"
-                                            routerLinkActive="router-link-active">Sign In</a></span>
-                                </div>
-                            </form>
+                          <form [formGroup]="signupForm" (ngSubmit)="signUp()">
+                            <div class="form-group">
+                              <input type="text" formControlName="firstname" class="form-control" placeholder="firstname" />
+                              <button class="btn icon"><i class="material-icons">person_outline</i></button>
+                              <div class="" *ngIf="submitted ||signupForm.controls['firstname'].errors && signupForm.controls['firstname'].touched">firstname is required.</div>
+                            </div>
+                            <div class="form-group">
+                              <input type="text" formControlName="lastname" class="form-control" placeholder="lastname" />
+                              <button class="btn icon"><i class="material-icons">person_outline</i></button>
+                                <div class="" *ngIf="submitted ||signupForm.controls['lastname'].errors && signupForm.controls['lastname'].touched">lastname is required.</div>
+                            </div>
+                            <div class="form-group">
+                              <input type="text" formControlName="contact" class="form-control" placeholder="contact" />
+                              <button class="btn icon"><i class="material-icons">person_outline</i></button>
+                                <div class="" *ngIf="submitted ||signupForm.controls['contact'].errors && signupForm.controls['contact'].touched">contact is required.</div>
+                            </div>
+                            <div class="form-group">
+                              <input type="email" formControlName="email" class="form-control" placeholder="email" />
+                              <button class="btn icon"><i class="material-icons">mail_outline</i></button>
+                                <div class="" *ngIf="submitted ||signupForm.controls['email'].errors && signupForm.controls['email'].touched">email is required.</div>
+                            </div>
+                            <div class="form-group">
+                              <input type="password" formControlName="password" class="form-control" placeholder="password" />
+                              <button class="btn icon"><i class="material-icons">lock_outline</i></button>
+                                <div class="" *ngIf="submitted ||signupForm.controls['password'].errors && signupForm.controls['password'].touched">password is required.</div>
+                            </div>
+                            <button type="submit" class="btn button">Sign Up</button>
+                            <div class="callout">
+                              <span>Already a member? <a [routerLink]="['/sign-in']" routerLinkActive="router-link-active">Sign In</a></span>
+                            </div>
+                          </form>
                         </div>
                     </div>
                 </div>

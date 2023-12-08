@@ -24,33 +24,35 @@ export class SignInComponent implements OnInit {
 
         this.signinForm = this.formBuilder.group({
             email: ['', Validators.required],
-            password: ['', [Validators.required, Validators.minLength(6)]]
+            password: ['', [Validators.required, Validators.minLength(8)]]
         });
     }
 
     signIn() {
         this.submitted = true;
-        var endPoint = 'signin'
-        this.auth.sendRequest('post', endPoint, this.signinForm.value).subscribe(
-            (result: any) => {
-                this.response = result;
-                if (result.success == false) {
-                    this.responseMessage = result.error.message;
-                  this.toastrMessage.showError(this.responseMessage, null);
-                } else if (result.success == true) {
-                    this.responseMessage = result.successmessage;
-                  this.toastrMessage.showSuccess(this.responseMessage, null);
-                    localStorage.setItem('token', result['token'])
-                    localStorage.setItem('user_data', JSON.stringify(result['user']));
-                    localStorage.setItem('userId', result['user']['id'])
-                    localStorage.setItem('firstname', result['user']['firstname'])
-                    localStorage.setItem('lastname', result['user']['lastname'])
-                    localStorage.setItem('email', result['user']['email'])
-                    localStorage.setItem('contact', result['user']['contact'])
-                    this.router.navigate(["/chat"]);
-                    this.signinForm.reset();
-                }
-            })
+        if(this.signinForm.valid){
+          var endPoint = 'signin'
+          this.auth.sendRequest('post', endPoint, this.signinForm.value).subscribe(
+              (result: any) => {
+                  this.response = result;
+                  if (result.success == false) {
+                      this.responseMessage = result.error.message;
+                    this.toastrMessage.showError(this.responseMessage, null);
+                  } else if (result.success == true) {
+                      this.responseMessage = result.successmessage;
+                    this.toastrMessage.showSuccess(this.responseMessage, null);
+                      localStorage.setItem('token', result['token'])
+                      localStorage.setItem('user_data', JSON.stringify(result['user']));
+                      localStorage.setItem('userId', result['user']['id'])
+                      localStorage.setItem('firstname', result['user']['firstname'])
+                      localStorage.setItem('lastname', result['user']['lastname'])
+                      localStorage.setItem('email', result['user']['email'])
+                      localStorage.setItem('contact', result['user']['contact'])
+                      this.router.navigate(["/chat"]);
+                      this.signinForm.reset();
+                  }
+              })
+        }
     }
 }
 

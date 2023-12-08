@@ -24,28 +24,32 @@ export class SignUpComponent implements OnInit {
         this.signupForm = this.formBuilder.group({
             firstname: ['', Validators.required],
             lastname: ['', Validators.required],
-            contact: ['', Validators.required],
-            email: ['', Validators.required],
-            password: ['', [Validators.required, Validators.minLength(6)]]
+            contact: ['', Validators.required, Validators.maxLength(10)],
+            email: ['', Validators.required,Validators.email],
+            password: ['', [Validators.required, Validators.minLength(8)]]
         });
     }
 
 
     signUp() {
         this.submitted = true;
-        var endPoint = 'signup'
-        this.auth.sendRequest('post', endPoint, this.signupForm.value)
-            .subscribe((result: any) => {
-                // this.auth.setLoader(false);
-                if (result.success == false) {
-                } else if (result.success == true) {
-                    this.responseMessage = result.successmessage;
-                    this.signupForm.reset();
-                    setTimeout(() => {
-                        this.responseMessage = '';
-                        this.router.navigate(['sign-in']);
-                    }, 3000);
-                }
-            })
+      console.log(this.signupForm);
+
+        if(this.signupForm.valid){
+          var endPoint = 'signup'
+          this.auth.sendRequest('post', endPoint, this.signupForm.value)
+              .subscribe((result: any) => {
+                  // this.auth.setLoader(false);
+                  if (result.success == false) {
+                  } else if (result.success == true) {
+                      this.responseMessage = result.successmessage;
+                      this.signupForm.reset();
+                      setTimeout(() => {
+                          this.responseMessage = '';
+                          this.router.navigate(['sign-in']);
+                      }, 3000);
+                  }
+              })
+        }
     }
 }
