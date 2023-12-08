@@ -8,6 +8,8 @@ export const environment = {
 
 export const baseUrl = 'http://localhost:7000/api/';
 export const serverUrl = 'http://localhost:7000';
+export const imagePath = 'http://localhost:7000';
+
 // export const baseUrl = 'http://103.127.29.85/mangoproject/public/api/'
 /*
  * For easier debugging in development mode, you can import the following file

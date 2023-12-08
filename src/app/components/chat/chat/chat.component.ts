@@ -6,6 +6,7 @@ import { AuthService } from '@core/services/auth.service';
 import { CommonService } from '@core/services/common.service';
 import { io, Socket } from "socket.io-client";
 import { serverUrl } from 'src/environments/environment';
+import { imagePath } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 
 
@@ -32,6 +33,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     message: string = '';
     imageUrl: any;
     selectedFile: any;
+    imagePath:any = imagePath
 
     constructor(private route: ActivatedRoute, private auth: AuthService,
          private commonService: CommonService,private dialog: MatDialog,
@@ -83,8 +85,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         //     this.socket.on('chatGroupMessage', (data) => {
         //         this.getGroupMessages();
         //     });
-        //     this.getGroup(this.receiverId);    
-        // }   
+        //     this.getGroup(this.receiverId);
+        // }
         // console.log(this.receiverId)
     }
 
@@ -158,7 +160,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     getImageUrl(message: string): string {
         // Assuming your images are stored in the 'uploads' folder
-        return `uploads/${message.replace('\\', '/')}`;
+        return this.imagePath + `/${message.replace('\\', '/')}`;
     }
 
     getGroupMessages() {
@@ -265,7 +267,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         // this.openImagePreview(this.selectedFile)
         console.log(this.imageUrl);
         console.log(this.selectedFile);
-        
+
     }
 
     openImagePreview(imageUrl: string): void {

@@ -137,7 +137,7 @@
                                                 <p>{{ item.message }}</p>
                                             </div>
                                             <ng-container *ngIf="isImage(item.message)">
-                                                <img [src]="getImageUrl(item.message)" alt="Image">
+                                                <img [src]="getImageUrl(item.message)" alt="Image" width = 200px; height = 200px>
                                             </ng-container>
                                         </div>
 
@@ -151,14 +151,14 @@
                                                 <p>{{ item.message }}</p>
                                             </div>
                                             <ng-container *ngIf="isImage(item.message)">
-                                                <img [src]="getImageUrl(item.message)" alt="Image">
+                                                <img [src]="getImageUrl(item.message)" alt="Image" width = 200px; height = 200px>
                                             </ng-container>
                                         </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- <div class="date">
                                 <hr>
                                 <span>Today</span>
