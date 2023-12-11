@@ -16,34 +16,44 @@ export class SidebarComponent {
     loginUser: any
     activeSingleClass: boolean = false;
     activeGroupClass: boolean = false;
+    activeSettingClass: boolean = false;
 
     constructor(private auth: AuthService, private router: Router, private commonService: CommonService) {
         this.userId = localStorage.getItem('userId');
         let data: any = localStorage.getItem('user_data');
         this.loginUser = JSON.parse(data)
-        if (this.router.url == '/chat'){
-          this.activeSingleClass = true;
-        } else if (this.router.url == '/group-chat'){
-          this.activeGroupClass = true;
+        console.log(this.loginUser);
+        
+        if (this.router.url == '/chat') {
+            this.activeSingleClass = true;
+        } else if (this.router.url == '/group-chat') {
+            this.activeGroupClass = true;
+        } else if (this.router.url == '/my-profile') {
+            this.activeSettingClass = true;
         }
 
         this.commonService.menupDataEmitter.subscribe((data) => {
             if (data == 'singleChat') {
                 this.activeSingleClass = true;
                 this.activeGroupClass = false;
+                this.activeSettingClass = false;
                 this.getAllUsers();
             } else if (data == 'groupChat') {
                 this.activeGroupClass = true;
                 this.activeSingleClass = false;
+                this.activeSettingClass = false;
                 this.getAllGroups();
+            } else if (data == 'settings') {
+                this.activeSettingClass = true;
+                this.activeGroupClass = false;
+                this.activeSingleClass = false;
             }
-
         });
     }
 
     ngOnInit(): void {
-      this.getAllUsers();
-      this.getAllGroups();
+        this.getAllUsers();
+        this.getAllGroups();
     }
 
     getAllUsers() {
@@ -54,7 +64,7 @@ export class SidebarComponent {
                 if (result.success == false) {
                     console.log(result);
                 } else if (result.success == true) {
-                  this.allUsers =[];
+                    this.allUsers = [];
                     result.user.forEach((element: any, index: any) => {
                         if (element.id != this.userId) {
                             this.allUsers.push(element)
@@ -93,8 +103,12 @@ export class SidebarComponent {
     selectedGroup(groupData: any) {
         this.commonService.sendGroupData(groupData)
     }
-    isValue: number = 0;
 
+    goToprofile(){
+        this.router.navigate(['/my-profile']);
+    }
+
+    isValue: number = 0;
     toggle(num: number) { this.isValue = num; }
 
     logout() {

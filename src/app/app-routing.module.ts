@@ -5,6 +5,7 @@ import { SignUpComponent } from '@components/Authentication/sign-up/sign-up.comp
 import { ChatComponent } from '@components/chat/chat/chat.component';
 import { GroupChatComponent } from '@components/chat/group-chat/group-chat.component';
 import { PageNotFoundComponent } from '@components/page-not-found/page-not-found.component';
+import { MyProfileComponent } from '@components/profiles/my-profile/my-profile.component';
 import { LayoutComponent } from '@components/shared/layout/layout.component';
 
 const routes: Routes = [
@@ -20,6 +21,8 @@ const routes: Routes = [
         children: [
             { path: 'chat', component: ChatComponent, data: { title: 'Chat' } },
             { path: 'group-chat', component: GroupChatComponent, data: { title: 'Group Chat' } },
+            { path: 'my-profile', component: MyProfileComponent, data: { title: 'My Profile' } },
+
             { path: 'dashboard', component: PageNotFoundComponent, data: { title: 'Page-Not-Found' } }
         ]
     },

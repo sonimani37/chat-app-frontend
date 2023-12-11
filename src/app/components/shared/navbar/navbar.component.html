@@ -22,10 +22,10 @@
                 </a>
                 <button class="btn mode">
                   <i class="material-icons">brightness_2</i>
-                </button>
-                <a href="#settings" data-toggle="tab">
+                </button>-->
+                <a  data-toggle="tab" [routerLink]="['/my-profile']"  (click)="onMenuClick('settings')">
                   <i class="material-icons">settings</i>
-                </a>-->
+                </a>
                 <button class="btn power" (click)="logout();"><i class="material-icons">power_settings_new</i></button>
             </div>
         </div>

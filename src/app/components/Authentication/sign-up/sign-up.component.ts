@@ -52,20 +52,20 @@ export class SignUpComponent implements OnInit {
         if(this.signupForm.valid){
             this.removeConfirmPasswordField()
             console.log(this.signupForm.value);
-        //   var endPoint = 'signup'
-        //   this.auth.sendRequest('post', endPoint, this.signupForm.value)
-        //       .subscribe((result: any) => {
-        //           // this.auth.setLoader(false);
-        //           if (result.success == false) {
-        //           } else if (result.success == true) {
-        //               this.responseMessage = result.successmessage;
-        //               this.signupForm.reset();
-        //               setTimeout(() => {
-        //                   this.responseMessage = '';
-        //                   this.router.navigate(['sign-in']);
-        //               }, 3000);
-        //           }
-        //       })
+          var endPoint = 'signup'
+          this.auth.sendRequest('post', endPoint, this.signupForm.value)
+              .subscribe((result: any) => {
+                  // this.auth.setLoader(false);
+                  if (result.success == false) {
+                  } else if (result.success == true) {
+                      this.responseMessage = result.successmessage;
+                      this.signupForm.reset();
+                      setTimeout(() => {
+                          this.responseMessage = '';
+                          this.router.navigate(['sign-in']);
+                      }, 3000);
+                  }
+              })
         }
     }
 

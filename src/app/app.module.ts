@@ -18,6 +18,7 @@ import { ImagePreviewModalComponent } from './components/shared/image-preview-mo
 import {MatDialogModule} from '@angular/material/dialog';
 import { GroupChatComponent } from './components/chat/group-chat/group-chat.component';
 import { ToastrModule } from 'ngx-toastr';
+import { MyProfileComponent } from './components/profiles/my-profile/my-profile.component';
 
 @NgModule({
     declarations: [
@@ -31,6 +32,7 @@ import { ToastrModule } from 'ngx-toastr';
         LayoutComponent,
         ImagePreviewModalComponent,
         GroupChatComponent,
+        MyProfileComponent,
     ],
     imports: [
         BrowserModule,
