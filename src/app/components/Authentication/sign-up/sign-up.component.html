@@ -26,27 +26,73 @@
                             <div class="form-group">
                               <input type="text" formControlName="firstname" class="form-control" placeholder="firstname" />
                               <button class="btn icon"><i class="material-icons">person_outline</i></button>
-                              <div class="" *ngIf="submitted ||signupForm.controls['firstname'].errors && signupForm.controls['firstname'].touched">firstname is required.</div>
+
+                              <span class="text-danger" *ngIf="submitted || signupForm.controls['firstname'].touched">
+                                <span *ngIf="signupForm.controls['firstname'].errors">firstname is required.</span>
+                              </span>
                             </div>
                             <div class="form-group">
                               <input type="text" formControlName="lastname" class="form-control" placeholder="lastname" />
                               <button class="btn icon"><i class="material-icons">person_outline</i></button>
-                                <div class="" *ngIf="submitted ||signupForm.controls['lastname'].errors && signupForm.controls['lastname'].touched">lastname is required.</div>
+
+                              <span class="text-danger" *ngIf="submitted || signupForm.controls['lastname'].touched">
+                                <span *ngIf="signupForm.controls['lastname'].errors">lastname is required.</span>
+                              </span>
+
+                                <!-- <div class="text-danger" *ngIf="submitted ||signupForm.controls['lastname'].errors && signupForm.controls['lastname'].touched">lastname is required.</div> -->
                             </div>
                             <div class="form-group">
                               <input type="text" formControlName="contact" class="form-control" placeholder="contact" />
                               <button class="btn icon"><i class="material-icons">person_outline</i></button>
-                                <div class="" *ngIf="submitted ||signupForm.controls['contact'].errors && signupForm.controls['contact'].touched">contact is required.</div>
+                              <span class="text-danger" *ngIf="submitted || signupForm.controls['contact'].touched">
+                                <span *ngIf="signupForm.controls['contact'].errors?.['required']">Contact is required</span>
+                                <span *ngIf="signupForm.controls['contact'].touched && signupForm.controls['contact'].errors?.['pattern'] && signupForm.controls['contact'].invalid">
+                                  Contact is not valid
+                                </span>
+                              </span>
+
                             </div>
                             <div class="form-group">
                               <input type="email" formControlName="email" class="form-control" placeholder="email" />
                               <button class="btn icon"><i class="material-icons">mail_outline</i></button>
-                                <div class="" *ngIf="submitted ||signupForm.controls['email'].errors && signupForm.controls['email'].touched">email is required.</div>
+                              <span class="text-danger" *ngIf="submitted || signupForm.controls['email'].touched">
+                                <span *ngIf="signupForm.controls['email'].errors?.['required']"> email is required.</span>
+                                <span *ngIf="signupForm.controls['email'].errors?.['email'] && signupForm.controls['email'].invalid">Email is not valid.</span>
+                              </span>
                             </div>
                             <div class="form-group">
                               <input type="password" formControlName="password" class="form-control" placeholder="password" />
                               <button class="btn icon"><i class="material-icons">lock_outline</i></button>
-                                <div class="" *ngIf="submitted ||signupForm.controls['password'].errors && signupForm.controls['password'].touched">password is required.</div>
+
+                              <span class="text-danger" *ngIf="submitted || signupForm.controls['password'].touched">
+                                <span *ngIf="signupForm.controls['password'].errors?.['required']"> password is required.</span>
+
+                                <span *ngIf="signupForm.controls['password'].touched && signupForm.controls['password'].errors?.['minlength']"> Password must be at least 8 characters long.
+                                </span>
+                                
+                                <span *ngIf="signupForm.controls['password'].touched && signupForm.controls['password'].errors?.['pattern']
+                                   && signupForm.controls['password'].invalid">password is not valid.
+                                </span>
+                              </span>
+                                <!-- <div class="text-danger" *ngIf="submitted ||signupForm.controls['password'].errors && signupForm.controls['password'].touched">password is required.</div> -->
+                            </div>
+                            <div class="form-group">
+                              <input type="password" formControlName="confirmPassword" class="form-control" placeholder="Confirm Password" />
+                              <button class="btn icon"><i class="material-icons">lock_outline</i></button>
+
+                              <span class="text-danger" *ngIf="submitted || signupForm.controls['confirmPassword'].touched">
+                                <span *ngIf="signupForm.controls['confirmPassword']?.errors?.['required']"> confirmPassword is required.</span>
+                                <span *ngIf="signupForm.hasError('passwordMismatch')"> Password and Confirm Password do not match.</span>
+
+                              </span>
+
+                              <!-- <div *ngIf="signupForm.get('confirmPassword').hasError('required') && signupForm.get('confirmPassword').touched">
+                                Confirm Password is required.
+                              </div>
+                              <div *ngIf="signupForm.hasError('passwordMismatch') && signupForm.get('confirmPassword').touched">
+                                Password and Confirm Password do not match.
+                              </div> -->
+
                             </div>
                             <button type="submit" class="btn button">Sign Up</button>
                             <div class="callout">

@@ -33,10 +33,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     message: string = '';
     imageUrl: any;
     selectedFile: any;
-    imagePath:any = imagePath
+    imagePath: any = imagePath
 
     constructor(private route: ActivatedRoute, private auth: AuthService,
-         private commonService: CommonService,private dialog: MatDialog,
+        private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
 
         this.socket = io(serverUrl);
@@ -104,18 +104,6 @@ export class ChatComponent implements OnInit, OnDestroy {
             });
     }
 
-    getGroup(userId: any) {
-        var endPoint = 'group?id=' + userId
-        this.auth.sendRequest('get', endPoint, null)
-            .subscribe((result: any) => {
-                if (result.success == false) {
-
-                } else if (result.success == true) {
-                    this.selectedUser = result.group;
-                }
-            });
-    }
-
     getMessages() {
         let dataObj = {
             senderId: this.senderId,
@@ -158,69 +146,40 @@ export class ChatComponent implements OnInit, OnDestroy {
         return this.imagePath + `/${message.replace('\\', '/')}`;
     }
 
-    getGroupMessages() {
-        let dataObj = {
-            groupId: this.receiverId
-        }
-        var endPoint = 'group/get-messages'
-        this.auth.sendRequest('post', endPoint, dataObj).subscribe(
-            (result: any) => {
-                if (result.success == false) {
-
-                } else if (result.success == true) {
-                    this.previousGroupMsgs = [];
-                    this.previousGroupMsgs = result.messages;
-                    this.previousGroupMsgs.forEach((element: any) => {
-                        if (element.senderId == this.senderId) {
-                            element.isSender = true;
-                            element.isReceiver = false;
-                        } else {
-                            element.isReceiver = true;
-                            element.isSender = false;
-                        }
-                    });
-                }
-            })
-
-    }
-
     sendMessage() {
         var chatData: any;
         var endPoint: any
-      var formData: any = new FormData();
-
-        if (this.chatType == 'single') {
-            endPoint = 'chat/send-message'
-            // chatData = {
-            //     message: this.chatForm.value.message,
-            //     receiverId: this.receiverId,
-            //     senderId: this.chatForm.value.senderId
-            // }
-            formData.append("message", this.chatForm.value.message);
-            formData.append("receiverId", this.receiverId);
-            formData.append("senderId", this.chatForm.value.senderId);
-            if(this.selectedFile){
-              // chatData.file = this.selectedFile;
-              formData.append("files", this.selectedFile);
+        var formData: any = new FormData();
+        console.log(this.chatForm);
+        
+        if(this.chatForm.valid){
+            if (this.chatType == 'single') {
+                endPoint = 'chat/send-message'
+                formData.append("message", this.chatForm.value.message);
+                formData.append("receiverId", this.receiverId);
+                formData.append("senderId", this.chatForm.value.senderId);
+                if (this.selectedFile) {
+                    formData.append("files", this.selectedFile);
+                }
             }
-        }
-      this.auth.sendRequest('post', endPoint, formData).subscribe(
-            (result: any) => {
-                if (result.success == false) {
+            this.auth.sendRequest('post', endPoint, formData).subscribe(
+                (result: any) => {
+                    if (result.success == false) {
 
-                } else if (result.success == true) {
-                  this.imageUrl = '';
-                  this.selectedFile = '';
-                    if (this.chatType == 'single') {
-                        this.socket.emit('user-message', chatData, (error: any) => { })
-                        this.getMessages();
+                    } else if (result.success == true) {
+                        this.imageUrl = '';
+                        this.selectedFile = '';
+                        if (this.chatType == 'single') {
+                            this.socket.emit('user-message', chatData, (error: any) => { })
+                            this.getMessages();
+
+                        }
+                        this.message = '';
+                        this.chatForm.reset();
 
                     }
-                    this.message = '';
-                    this.chatForm.reset();
-
-                }
             })
+        }
     }
 
     uploadFile(event: any) {
@@ -231,20 +190,6 @@ export class ChatComponent implements OnInit, OnDestroy {
         if (this.selectedFile) {
             this.readFile();
         }
-
-        // const reader: FileReader = new FileReader();
-        // reader.readAsDataURL(file);
-        // var url: any;
-        // let self = this
-        // reader.onload = function (_event) {
-        //   url = reader.result;
-        //   var imagee: HTMLImageElement = new Image();
-        //   imagee.src = URL.createObjectURL(file);
-        //   imagee.onload = (e: any) => {
-        //     const imagee = e.path[0] as HTMLImageElement;
-        //     console.log(imagee);
-        //   }
-        // }
     }
 
     readFile(): void {
@@ -254,24 +199,13 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.imageUrl = e.target?.result as string;
         };
         reader.readAsDataURL(this.selectedFile as Blob);
-        // this.openImagePreview(this.selectedFile)
     }
 
     openImagePreview(imageUrl: string): void {
         this.dialog.open(ImagePreviewModalComponent, {
-          data: { imageUrl },
+            data: { imageUrl },
         });
-      }
-
-    // previewImage(id: number, image: string) {
-    //     this.viewImage[id] = true;
-    //     this.preImage = image;
-    //     $('#imagePriview').modal('show')
-    // }
-
-    // closePreviewImage() {
-    //     $('#imagePriview').modal('hide')
-    // }
+    }
 
     ngOnDestroy(): void {
         // Disconnect the socket when the component is destroyed

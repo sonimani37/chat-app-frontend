@@ -33,16 +33,16 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     selectedFile: any;
     imagePath: any = imagePath
 
-  constructor(private route: ActivatedRoute, private auth: AuthService, private commonService: CommonService, private dialog: MatDialog,
+    constructor(private route: ActivatedRoute, private auth: AuthService, private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
 
         this.socket = io(serverUrl);
 
         this.commonService.groupDataEmitter.subscribe((data) => {
-          this.receiverId = data.id;
-          this.getGroup(this.receiverId)
-          this.getGroupMessages();
-          // Handle the received data as needed
+            this.receiverId = data.id;
+            this.getGroup(this.receiverId)
+            this.getGroupMessages();
+            // Handle the received data as needed
         });
 
     }
@@ -56,13 +56,13 @@ export class GroupChatComponent implements OnInit, OnDestroy {
             receiverId: ['', Validators.required]
         });
 
-         if (this.chatType == 'group')  {
+        if (this.chatType == 'group') {
             // this.getGroupMessages();
             this.socket.on('chatGroupMessage', (data) => {
                 this.getGroupMessages();
             });
-          //  console.log(this.receiverId);
-          //   this.getGroup(this.receiverId);
+            //  console.log(this.receiverId);
+            //   this.getGroup(this.receiverId);
         }
 
         // this.route.queryParams.subscribe(params => {
@@ -101,7 +101,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
 
                 } else if (result.success == true) {
                     this.selectedGroup = result.group;
-                  this.receiverId = result.group.id;
+                    this.receiverId = result.group.id;
                 }
             });
     }
@@ -135,38 +135,33 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     sendMessage() {
         var chatData: any;
         var endPoint: any;
-      var formData: any = new FormData();
-
-        if (this.chatType == 'group') {
-            endPoint = 'group/send-message'
-            // chatData = {
-            //     message: this.chatForm.value.message,
-            //     groupId: this.receiverId,
-            //     senderId: this.chatForm.value.senderId
-            // }
-          formData.append("message", this.chatForm.value.message);
-          formData.append("groupId", this.receiverId);
-          formData.append("senderId", this.chatForm.value.senderId);
-          if (this.selectedFile) {
-            // chatData.file = this.selectedFile;
-            formData.append("files", this.selectedFile);
-          }
-        }
-        this.auth.sendRequest('post', endPoint, formData).subscribe(
-            (result: any) => {
-                if (result.success == false) {
-
-                } else if (result.success == true) {
-                    if (this.chatType == 'group') {
-                        // Emit the message to the group
-                        this.socket.emit('group-message', chatData);
-                        this.getGroupMessages();
-                    }
-                    this.message = '';
-                    this.chatForm.reset();
-
+        var formData: any = new FormData();
+        if (this.chatForm.valid) {
+            if (this.chatType == 'group') {
+                endPoint = 'group/send-message'
+                formData.append("message", this.chatForm.value.message);
+                formData.append("groupId", this.receiverId);
+                formData.append("senderId", this.chatForm.value.senderId);
+                if (this.selectedFile) {
+                    formData.append("files", this.selectedFile);
                 }
-            })
+            }
+            this.auth.sendRequest('post', endPoint, formData).subscribe(
+                (result: any) => {
+                    if (result.success == false) {
+
+                    } else if (result.success == true) {
+                        if (this.chatType == 'group') {
+                            // Emit the message to the group
+                            this.socket.emit('group-message', chatData);
+                            this.getGroupMessages();
+                        }
+                        this.message = '';
+                        this.chatForm.reset();
+
+                    }
+                })
+        }
     }
 
     uploadFile(event: any) {
@@ -188,7 +183,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         reader.readAsDataURL(this.selectedFile as Blob);
     }
 
-        isImage(message: string): boolean {
+    isImage(message: string): boolean {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'];  // Add more extensions if needed
         const lowerCaseMessage = message.toLowerCase();
         return imageExtensions.some(ext => lowerCaseMessage.endsWith(ext));
