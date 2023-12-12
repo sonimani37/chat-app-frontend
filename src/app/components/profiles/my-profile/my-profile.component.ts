@@ -18,6 +18,8 @@ export class MyProfileComponent implements OnInit {
     response: any;
     loginUser: any ;
     currentUser: any;
+    selectedFile: File | undefined;
+    imageUrl!: string;
 
     constructor(private formBuilder: UntypedFormBuilder, private router: Router, private auth: AuthService,
         private route: ActivatedRoute,private toastrMessage: ToastrMessagesService) { }
@@ -25,8 +27,6 @@ export class MyProfileComponent implements OnInit {
     ngOnInit(): void {
         let data:any  = localStorage.getItem('user_data');
         this.loginUser = JSON.parse(data);
-        console.log(this.loginUser);
-        
         this.updateProfileForm = this.formBuilder.group({
             firstname: ['', Validators.required],
             lastname: ['', Validators.required],
@@ -43,7 +43,6 @@ export class MyProfileComponent implements OnInit {
                 if (result.success == false) {
 
                 } else if (result.success == true) {
-                    console.log(result.user);
                     this.currentUser = result.user;
                     this.setFormData()
                 }
@@ -61,18 +60,33 @@ export class MyProfileComponent implements OnInit {
     update() {
         this.submitted = true;
         console.log(this.updateProfileForm);
-
         if (this.updateProfileForm.valid) {
             console.log(this.updateProfileForm.value);
+
+            var formData: any = new FormData();
+            formData.append("firstname", this.updateProfileForm.value.firstname);
+            formData.append("lastname", this.updateProfileForm.value.lastname);
+            formData.append("contact", this.updateProfileForm.value.contact);
+            formData.append("email", this.updateProfileForm.value.email);
+
+            if (this.selectedFile) {
+                formData.append("files", this.selectedFile);
+            }else if(this.currentUser?.image){
+                formData.append("files", this.currentUser?.image);
+            }
+            formData.forEach((value:any,key:any) => {
+                console.log( key +'----------------',value);
+                
+            });
             var endPoint = 'updateProfile/' + this.loginUser.id
-            this.auth.sendRequest('post', endPoint, this.updateProfileForm.value)
+            this.auth.sendRequest('post', endPoint, formData)
                 .subscribe((result: any) => {
                     // this.auth.setLoader(false);
                     if (result.success == false) {
+
                     } else if (result.success == true) {
                         this.responseMessage = result.successmessage;
                         this.toastrMessage.showSuccess(this.responseMessage, null);
-                        console.log(result);
                         localStorage.removeItem('user_data'); 
                         localStorage.setItem('user_data',JSON.stringify(result.user));
                         this.ngOnInit();
@@ -81,5 +95,24 @@ export class MyProfileComponent implements OnInit {
                 })
         }
     }
+
+    uploadFile(event: any) {
+        const file: File = event.target['files'][0];
+        this.selectedFile = file;
+        if (this.selectedFile) {
+            this.readFile();
+        }
+    }
+
+
+    readFile(): void {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            // Set the 'imageUrl' property with the data URL of the uploaded image
+            this.imageUrl = e.target?.result as string;
+        };
+        reader.readAsDataURL(this.selectedFile as Blob);
+    }
+
 
 }

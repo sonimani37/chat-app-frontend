@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ImagePreviewModalComponent } from '@components/shared/image-preview-modal/image-preview-modal.component';
 import { AuthService } from '@core/services/auth.service';
 import { CommonService } from '@core/services/common.service';
 import { io, Socket } from "socket.io-client";
@@ -37,9 +36,10 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         private formBuilder: UntypedFormBuilder) {
 
         this.socket = io(serverUrl);
+        this.senderId = localStorage.getItem('userId');
 
         this.commonService.groupDataEmitter.subscribe((data) => {
-            this.receiverId = data.id;
+            this.receiverId = data?.id;
             this.getGroup(this.receiverId)
             this.getGroupMessages();
             // Handle the received data as needed
@@ -48,7 +48,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.senderId = localStorage.getItem('userId');
 
         this.chatForm = this.formBuilder.group({
             message: ['', Validators.required],
@@ -127,6 +126,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                             element.isSender = false;
                         }
                     });
+                    console.log(this.previousGroupMsgs);
                 }
             })
 
@@ -136,6 +136,8 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         var chatData: any;
         var endPoint: any;
         var formData: any = new FormData();
+        this.chatForm.controls['receiverId'].setValue(this.receiverId);
+        this.chatForm.controls['senderId'].setValue(this.senderId);
         if (this.chatForm.valid) {
             if (this.chatType == 'group') {
                 endPoint = 'group/send-message'
@@ -156,8 +158,8 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                             this.socket.emit('group-message', chatData);
                             this.getGroupMessages();
                         }
-                        this.message = '';
                         this.chatForm.reset();
+                        this.message = '';
 
                     }
                 })

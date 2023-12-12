@@ -4,13 +4,14 @@
         <div class="inside">
             <div class="nav nav-tab menu">
                 <button class="btn">
-                    <img class="avatar-xl" src="../../../assets/img/avatars/avatar-male-1.jpg" alt="avatar">
+                    <img class="avatar-xl" [src]="getImageUrl(loginUserData.userImage.filePath)"  alt="avatar">
 
                 </button>
-                <a >{{ loginUserData?.firtname?.charAt(0) }} {{ loginUserData?.lastname?.charAt(0) }}</a>
-                 <!-- <a href="#members" data-toggle="tab">
-                   <i class="material-icons">account_circle</i>
-                  </a>  -->
+                <!-- <a href="#members" data-toggle="tab">
+                  <i class="material-icons">account_circle</i>
+                </a>  -->
+                <!-- <a >{{ loginUserData?.firtname}} {{ loginUserData?.lastname}}</a> -->
+                <!-- <a >{{ loginUserData?.firtname?.charAt(0) }} {{ loginUserData?.lastname?.charAt(0) }}</a> -->
                 <a  data-toggle="tab" class="active" [routerLink]="['/chat']" routerLinkActive="router-link-active" (click)="onMenuClick('singleChat')" >
                   <i class="material-icons active">chat_bubble_outline</i>
                 </a>

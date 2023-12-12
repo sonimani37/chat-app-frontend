@@ -169,16 +169,16 @@
                     </div> -->
                     <div class="discussions">
                         <h1>Discussions/Chat</h1>
-                        <h3>{{ loginUser?.firstname }} {{ loginUser?.lastname }}</h3>
+                        <h2>{{ loginUser?.firstname }} {{ loginUser?.lastname }}</h2>
                         <div class="list-group" id="chats" role="tablist">
                             <a class="filterDiscussions all unread single active" *ngFor="let item of allUsers"
                                 id="list-chat-list" data-toggle="list" role="tab" (click)="selectedUser(item)">
-                                <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-1.jpg"
+                                <img class="avatar-md" [src]="getImageUrl(item.UserImages.filePath)"
                                     data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
-                                <!-- <div class="status">
+                                 <div class="status" *ngIf="item.status == 'online'">
                                     <i class="material-icons online">fiber_manual_record</i>
                                 </div>
-                                <div class="new bg-yellow">
+                                <!-- <div class="new bg-yellow">
                                     <span>+7</span>
                                 </div> -->
                                 <div class="data">
@@ -484,7 +484,7 @@
                 <div id="settings" class="tab-pane fade" id="settings" [ngClass]="{ 'active show' : activeSettingClass == true }">
                     <div class="settings">
                         <div class="profile">
-                            <img class="avatar-xl" src="../../../assets/img/avatars/avatar-male-1.jpg" alt="avatar">
+                            <img class="avatar-xl" [src]="getImageUrl(loginUser.userImage.filePath)" alt="avatar">
                             <h1><a>{{ loginUser?.firstname }} {{ loginUser?.lastname }}</a></h1>
                             <!-- <span>Helena, Montana</span> -->
                             <!-- <div class="stats">

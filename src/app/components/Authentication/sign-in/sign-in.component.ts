@@ -3,7 +3,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { ToastrMessagesService } from '@core/services/toastr-messages.service';
-
+import { serverUrl } from '@env/environment';
+import { io, Socket } from "socket.io-client";
 @Component({
     selector: 'app-sign-in',
     templateUrl: './sign-in.component.html',
@@ -16,9 +17,12 @@ export class SignInComponent implements OnInit {
     loading = false;
     responseMessage: string = '';
     response: any;
+    socket: Socket;
 
     constructor(private formBuilder: UntypedFormBuilder, private router: Router, private auth: AuthService,
-        private route: ActivatedRoute,private toastrMessage: ToastrMessagesService) { }
+        private route: ActivatedRoute,private toastrMessage: ToastrMessagesService) {
+            this.socket = io(serverUrl);
+         }
 
     ngOnInit(): void {
 
@@ -26,6 +30,12 @@ export class SignInComponent implements OnInit {
             email: ['', [Validators.required,Validators.email]],
             password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/),]],
         });
+
+        // // In your Angular component
+        // this.socket.on('userStatusChange', (data) => {
+        //     // Update user status in the UI based on the received data
+        //     console.log('User status change:', data);
+        // });
     }
 
     signIn() {
@@ -52,6 +62,7 @@ export class SignInComponent implements OnInit {
                     //   localStorage.setItem('contact', result['user']['contact'])
                       this.router.navigate(["/my-profile"]);
                       this.signinForm.reset();
+                      this.socket.emit('status-change', { userId: result['user']['id'], status: 'online' })
                   }
               })
         }

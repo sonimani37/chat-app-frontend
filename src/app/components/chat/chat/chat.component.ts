@@ -34,6 +34,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     imageUrl: any;
     selectedFile: any;
     imagePath: any = imagePath
+    loginUser: any;
 
     constructor(private route: ActivatedRoute, private auth: AuthService,
         private commonService: CommonService, private dialog: MatDialog,
@@ -41,6 +42,9 @@ export class ChatComponent implements OnInit, OnDestroy {
 
         this.socket = io(serverUrl);
 
+        this.senderId = localStorage.getItem('userId');
+        this.loginUser = localStorage.getItem('user_data');
+        this.loginUser =  JSON.parse( this.loginUser);
         this.commonService.userDataEmitter.subscribe((data) => {
             this.receiverId = data.id;
             this.getUser(this.receiverId)
@@ -50,7 +54,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.senderId = localStorage.getItem('userId');
 
         this.chatForm = this.formBuilder.group({
             message: ['', Validators.required],
@@ -98,7 +101,8 @@ export class ChatComponent implements OnInit, OnDestroy {
                 if (result.success == false) {
 
                 } else if (result.success == true) {
-                    this.selectedUser = result.user;
+                    this.selectedUser = result.user; 
+                    
                     this.receiverId = this.selectedUser.id;
                 }
             });
@@ -150,8 +154,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         var chatData: any;
         var endPoint: any
         var formData: any = new FormData();
-        console.log(this.chatForm);
-        
+        this.chatForm.controls['receiverId'].setValue(this.receiverId);
+        this.chatForm.controls['senderId'].setValue(this.senderId);
         if(this.chatForm.valid){
             if (this.chatType == 'single') {
                 endPoint = 'chat/send-message'
@@ -172,11 +176,9 @@ export class ChatComponent implements OnInit, OnDestroy {
                         if (this.chatType == 'single') {
                             this.socket.emit('user-message', chatData, (error: any) => { })
                             this.getMessages();
-
                         }
-                        this.message = '';
                         this.chatForm.reset();
-
+                        this.message = '';
                     }
             })
         }
@@ -199,12 +201,6 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.imageUrl = e.target?.result as string;
         };
         reader.readAsDataURL(this.selectedFile as Blob);
-    }
-
-    openImagePreview(imageUrl: string): void {
-        this.dialog.open(ImagePreviewModalComponent, {
-            data: { imageUrl },
-        });
     }
 
     ngOnDestroy(): void {

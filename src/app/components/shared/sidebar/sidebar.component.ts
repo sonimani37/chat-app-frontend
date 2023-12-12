@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { CommonService } from '@core/services/common.service';
+import { imagePath } from '@env/environment';
+import { serverUrl } from '@env/environment';
+import { io, Socket } from "socket.io-client";
 
 @Component({
     selector: 'app-sidebar',
@@ -17,12 +20,22 @@ export class SidebarComponent {
     activeSingleClass: boolean = false;
     activeGroupClass: boolean = false;
     activeSettingClass: boolean = false;
+    imagePath: any = imagePath
+    socket: Socket;
 
     constructor(private auth: AuthService, private router: Router, private commonService: CommonService) {
+
+        this.socket = io(serverUrl);
+
+        // In your Angular component
+        this.socket.on('userStatusChange', (data) => {
+            // Update user status in the UI based on the received data
+            this.getAllUsers();
+        });
+
         this.userId = localStorage.getItem('userId');
         let data: any = localStorage.getItem('user_data');
-        this.loginUser = JSON.parse(data)
-        console.log(this.loginUser);
+        this.loginUser = JSON.parse(data)        
         
         if (this.router.url == '/chat') {
             this.activeSingleClass = true;
@@ -107,6 +120,12 @@ export class SidebarComponent {
     goToprofile(){
         this.router.navigate(['/my-profile']);
     }
+
+    getImageUrl(message: string): string {
+        // Assuming your images are stored in the 'uploads' folder
+        return this.imagePath + `/${message.replace('\\', '/')}`;
+    }
+
 
     isValue: number = 0;
     toggle(num: number) { this.isValue = num; }

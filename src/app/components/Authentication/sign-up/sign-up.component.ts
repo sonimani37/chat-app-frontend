@@ -28,6 +28,7 @@ export class SignUpComponent implements OnInit {
             email: ['', [Validators.required,Validators.email]],
             password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/),]],
             confirmPassword: ['', [Validators.required]],
+            image: ['', [Validators.required]],
         },
         {
             validator: this.passwordMatchValidator // custom validator for matching password and confirm password
@@ -47,8 +48,6 @@ export class SignUpComponent implements OnInit {
     
     signUp() {
         this.submitted = true;
-      console.log(this.signupForm);
-
         if(this.signupForm.valid){
             this.removeConfirmPasswordField()
             console.log(this.signupForm.value);
