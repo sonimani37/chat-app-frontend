@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ImagePreviewModalComponent } from '@components/shared/image-preview-modal/image-preview-modal.component';
 import { AuthService } from '@core/services/auth.service';
 import { CommonService } from '@core/services/common.service';
 import { io, Socket } from "socket.io-client";
@@ -36,6 +35,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     imagePath: any = imagePath
     loginUser: any;
 
+    allUsers: any[] = [];
+
     constructor(private route: ActivatedRoute, private auth: AuthService,
         private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
@@ -65,6 +66,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.socket.on('chatMessage', (message: any) => {
             this.getMessages();
         });
+
+        this.getAllUsers();
 
         // this.route.queryParams.subscribe(params => {
         //     this.chatType = params['type'];
@@ -147,7 +150,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     getImageUrl(message: string): string {
         // Assuming your images are stored in the 'uploads' folder
-        return this.imagePath + `/${message.replace('\\', '/')}`;
+        return this.imagePath + `/${message?.replace('\\', '/')}`;
     }
 
     sendMessage() {
@@ -202,6 +205,31 @@ export class ChatComponent implements OnInit, OnDestroy {
         };
         reader.readAsDataURL(this.selectedFile as Blob);
     }
+
+    getAllUsers() {
+        var endPoint = 'getUsers'
+        this.auth.sendRequest('get', endPoint, null).subscribe(
+            (result: any) => {
+                result = result;
+                if (result.success == false) {
+                    console.log(result);
+                } else if (result.success == true) {
+                    this.allUsers = [];
+                    result.user.forEach((element: any, index: any) => {
+                        if (element.id != this.senderId) {
+                            this.allUsers.push(element)
+                        }
+                    });
+                    this.selectedUsers(this.allUsers[0]);
+                    // this.selectedUser(this.allUsers[this.allUsers.length - 1]);
+                }
+            })
+    }
+
+    selectedUsers(userData: any) {
+        this.commonService.sendUserData(userData)
+    }
+
 
     ngOnDestroy(): void {
         // Disconnect the socket when the component is destroyed

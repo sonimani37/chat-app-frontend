@@ -46,7 +46,9 @@ export class SignInComponent implements OnInit {
               (result: any) => {
                   this.response = result;
                   if (result.success == false) {
-                      this.responseMessage = result.error.message;
+                    this.responseMessage = result.error;
+                    console.log(this.responseMessage);
+                    
                     this.toastrMessage.showError(this.responseMessage, null);
                   } else if (result.success == true) {
                       this.responseMessage = result.successmessage;
@@ -66,6 +68,10 @@ export class SignInComponent implements OnInit {
                   }
               })
         }
+    }
+
+    goToForgotPass(){
+        this.router.navigate(['/forget-password']);
     }
 }
 

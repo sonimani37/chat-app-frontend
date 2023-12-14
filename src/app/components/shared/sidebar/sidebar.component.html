@@ -178,6 +178,9 @@
                                  <div class="status" *ngIf="item.status == 'online'">
                                     <i class="material-icons online">fiber_manual_record</i>
                                 </div>
+                                <div class="status"  *ngIf="item.status == 'offline'">
+                                    <i class="material-icons offline">fiber_manual_record</i>
+                                </div>
                                 <!-- <div class="new bg-yellow">
                                     <span>+7</span>
                                 </div> -->
@@ -339,7 +342,7 @@
                         <div class="list-group" id="chats" role="tablist">
                             <a class="filterDiscussions all unread single active" *ngFor="let item of allGroups"
                                 id="list-chat-list" data-toggle="list" role="tab" (click)="selectedGroup(item)">
-                                <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-1.jpg"
+                                <img class="avatar-md" [src]="getImageUrl(item.filePath)"
                                     data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
                                 <!-- <div class="status">
                           <i class="material-icons online">fiber_manual_record</i>
@@ -484,7 +487,8 @@
                 <div id="settings" class="tab-pane fade" id="settings" [ngClass]="{ 'active show' : activeSettingClass == true }">
                     <div class="settings">
                         <div class="profile">
-                            <img class="avatar-xl" [src]="getImageUrl(loginUser.userImage.filePath)" alt="avatar">
+                            <img class="avatar-xl" [src]="getImageUrl(loginUser.userImage.filePath)" alt="avatar">                           
+                                                      
                             <h1><a>{{ loginUser?.firstname }} {{ loginUser?.lastname }}</a></h1>
                             <!-- <span>Helena, Montana</span> -->
                             <!-- <div class="stats">

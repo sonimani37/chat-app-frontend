@@ -14,7 +14,7 @@
                                 <button class="btn item bg-teal">
                                     <i class="material-icons">party_mode</i>
                                 </button>
-                                <button class="btn item bg-purple">
+                                <button class="btn item bg-purple" (click)="loginWithGoogle()">
                                     <i class="material-icons">whatshot</i>
                                 </button>
                             </div>
@@ -47,9 +47,15 @@
 
                                     <!-- <div class="text-danger" *ngIf="submitted ||signupForm.controls['lastname'].errors && signupForm.controls['lastname'].touched">lastname is required.</div> -->
                                 </div>
+
                                 <div class="form-group">
-                                    <input type="text" formControlName="contact" class="form-control"
-                                        placeholder="contact" />
+                                    <select formControlName="selectedCountry" class="form-control">
+                                      <option *ngFor="let country of countries" [value]="country.phone_code" >
+                                        {{ country.flag }} {{ country.phone_code }} {{ country.name }} </option>
+                                    </select>
+                                  </div>
+                                <div class="form-group">
+                                    <input type="text" formControlName="contact" class="form-control"  placeholder="contact"/>
                                     <button class="btn icon"><i class="material-icons">person_outline</i></button>
                                     <span class="text-danger"
                                         *ngIf="submitted || signupForm.controls['contact'].touched">
@@ -108,14 +114,6 @@
                                             Password do not match.</span>
 
                                     </span>
-
-                                    <!-- <div *ngIf="signupForm.get('confirmPassword').hasError('required') && signupForm.get('confirmPassword').touched">
-                                Confirm Password is required.
-                              </div>
-                              <div *ngIf="signupForm.hasError('passwordMismatch') && signupForm.get('confirmPassword').touched">
-                                Password and Confirm Password do not match.
-                              </div> -->
-
                                 </div>
                                 <button type="submit" class="btn button">Sign Up</button>
                                 <div class="callout">

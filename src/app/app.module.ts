@@ -19,6 +19,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { GroupChatComponent } from './components/chat/group-chat/group-chat.component';
 import { ToastrModule } from 'ngx-toastr';
 import { MyProfileComponent } from './components/profiles/my-profile/my-profile.component';
+import { ForgetPasswordComponent } from './components/Authentication/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './components/Authentication/reset-password/reset-password.component';
 
 @NgModule({
     declarations: [
@@ -33,6 +35,8 @@ import { MyProfileComponent } from './components/profiles/my-profile/my-profile.
         ImagePreviewModalComponent,
         GroupChatComponent,
         MyProfileComponent,
+        ForgetPasswordComponent,
+        ResetPasswordComponent,
     ],
     imports: [
         BrowserModule,

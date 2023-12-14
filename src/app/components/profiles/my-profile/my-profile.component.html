@@ -41,23 +41,6 @@
                         is not valid.</span>
                 </span>
             </div>
-
-            <div class="form-group col-md-6">
-                <label for="inputEmail4">Upload Profile Picture</label>
-                <div class="message me" *ngIf="imageUrl">
-                    <img [src]="imageUrl" alt="Uploaded Image" width="100px" height="100px">
-                  </div>
-                <input type="file" formControlName="image" class="form-control" (change)="uploadFile($event)"/>
-             
-                <!-- <span class="text-danger" *ngIf="submitted || updateProfileForm.controls['email'].touched">
-                    <span *ngIf="updateProfileForm.controls['email'].errors?.['required']"> email is
-                        required.</span>
-                    <span
-                        *ngIf="updateProfileForm.controls['email'].errors?.['email'] && updateProfileForm.controls['email'].invalid">Email
-                        is not valid.</span>
-                </span> -->
-            </div>
-
         </div>
         <button type="submit" class="btn button" style="width: 120px;">Update</button>
     </form>

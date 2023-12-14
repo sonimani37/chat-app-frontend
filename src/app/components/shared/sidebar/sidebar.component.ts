@@ -22,6 +22,8 @@ export class SidebarComponent {
     activeSettingClass: boolean = false;
     imagePath: any = imagePath
     socket: Socket;
+    selectedFile: File | undefined;
+    imageUrl: string | undefined;
 
     constructor(private auth: AuthService, private router: Router, private commonService: CommonService) {
 
@@ -126,6 +128,30 @@ export class SidebarComponent {
         return this.imagePath + `/${message.replace('\\', '/')}`;
     }
 
+    uploadFile(event: any) {
+        const file: File = event.target['files'][0];
+        this.selectedFile = file;
+        if (this.selectedFile) {
+            this.readFile();
+        }
+    }
+
+    readFile(): void {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            // Set the 'imageUrl' property with the data URL of the uploaded image
+            this.imageUrl = e.target?.result as string;
+        };
+        reader.readAsDataURL(this.selectedFile as Blob);
+        this.changeProfileImage()
+    }
+
+    changeProfileImage(){
+        
+        if(this.selectedFile){
+            console.log(this.selectedFile);
+        }
+    }
 
     isValue: number = 0;
     toggle(num: number) { this.isValue = num; }

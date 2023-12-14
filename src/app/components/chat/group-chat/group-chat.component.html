@@ -69,6 +69,7 @@
 </div>
 <!-- End of Create Chat -->
 
+
 <div class="main">
     <div class="tab-content" id="nav-tabContent">
         <!-- Start of Babble -->
@@ -80,7 +81,7 @@
                         <div class="col-md-12">
                             <div class="inside">
                                 <a href="#">
-                                    <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-5.jpg"
+                                    <img class="avatar-md" [src]="getImageUrl(selectedGroup?.filePath)"
                                         data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
                                 </a>
                                 <div class="status">
@@ -89,33 +90,33 @@
                                 <div class="data">
                                     <h5><a>{{selectedGroup?.group_name }} </a></h5>
                                     <!-- <span *ngFor="let item of selectedGroup?.['user']">
-                                        {{item.firstname}} {{item.lastname}},
-                                        </span> -->
+                                                {{item.firstname}} {{item.lastname}},
+                                                </span> -->
                                     <span>Active now</span>
                                 </div>
                                 <!-- <button class="btn connect d-md-block d-none" name="1"><i
-                                        class="material-icons md-30">phone_in_talk</i></button>
-                                <button class="btn connect d-md-block d-none" name="1"><i
-                                        class="material-icons md-36">videocam</i></button>
-                                <button class="btn d-md-block d-none"><i
-                                        class="material-icons md-30">info</i></button>
-                                <div class="dropdown">
-                                    <button class="btn" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <button class="dropdown-item connect" name="1"><i
-                                                class="material-icons">phone_in_talk</i>Voice Call</button>
-                                        <button class="dropdown-item connect" name="1"><i
-                                                class="material-icons">videocam</i>Video Call</button>
-                                        <hr>
-                                        <button class="dropdown-item"><i class="material-icons">clear</i>Clear
-                                            History</button>
-                                        <button class="dropdown-item"><i class="material-icons">block</i>Block
-                                            Contact</button>
-                                        <button class="dropdown-item"><i class="material-icons">delete</i>Delete
-                                            Contact</button>
-                                    </div>
-                                </div> -->
+                                                class="material-icons md-30">phone_in_talk</i></button>
+                                        <button class="btn connect d-md-block d-none" name="1"><i
+                                                class="material-icons md-36">videocam</i></button>
+                                        <button class="btn d-md-block d-none"><i
+                                                class="material-icons md-30">info</i></button>
+                                        <div class="dropdown">
+                                            <button class="btn" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <button class="dropdown-item connect" name="1"><i
+                                                        class="material-icons">phone_in_talk</i>Voice Call</button>
+                                                <button class="dropdown-item connect" name="1"><i
+                                                        class="material-icons">videocam</i>Video Call</button>
+                                                <hr>
+                                                <button class="dropdown-item"><i class="material-icons">clear</i>Clear
+                                                    History</button>
+                                                <button class="dropdown-item"><i class="material-icons">block</i>Block
+                                                    Contact</button>
+                                                <button class="dropdown-item"><i class="material-icons">delete</i>Delete
+                                                    Contact</button>
+                                            </div>
+                                        </div> -->
                             </div>
                         </div>
                     </div>
@@ -124,10 +125,10 @@
                     <div class="container">
                         <div class="col-md-12">
                             <!-- <div class="date">
-                                <hr>
-                                <span>Yesterday</span>
-                                <hr>
-                            </div> -->
+                                        <hr>
+                                        <span>Yesterday</span>
+                                        <hr>
+                                    </div> -->
                             <div *ngFor="let item of previousGroupMsgs">
                                 <div class="message" *ngIf="item.isReceiver == true">
                                     <img class="avatar-md" [src]="getImageUrl(item?.sender?.UserImages?.filePath)"
@@ -142,7 +143,8 @@
                                                     height=200px>
                                             </ng-container>
                                         </div>
-                                        <div class="sender-avatar">{{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
+                                        <div class="sender-avatar">
+                                            {{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
                                         </div>
                                     </div>
                                     <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
@@ -168,65 +170,65 @@
                             </div>
 
                             <!-- <div class="date">
-                                <hr>
-                                <span>Today</span>
-                                <hr>
-                            </div>
-                            <div class="message me">
-                                <div class="text-main">
-                                    <div class="text-group me">
-                                        <div class="text me">
-                                            <p>Well done all. See you all at 2 for the kick-off meeting.</p>
+                                        <hr>
+                                        <span>Today</span>
+                                        <hr>
+                                    </div>
+                                    <div class="message me">
+                                        <div class="text-main">
+                                            <div class="text-group me">
+                                                <div class="text me">
+                                                    <p>Well done all. See you all at 2 for the kick-off meeting.</p>
+                                                </div>
+                                            </div>
+                                            <span>10:21 PM</span>
                                         </div>
                                     </div>
-                                    <span>10:21 PM</span>
-                                </div>
-                            </div>
-                            <div class="message">
-                                <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-5.jpg"
-                                    data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-                                <div class="text-main">
-                                    <div class="text-group">
-                                        <div class="text">
-                                            <div class="attachment">
-                                                <button class="btn attach"><i
-                                                        class="material-icons md-18">insert_drive_file</i></button>
-                                                <div class="file">
-                                                    <h5><a href="#">Tenacy Agreement.pdf</a></h5>
-                                                    <span>24kb Document</span>
+                                    <div class="message">
+                                        <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-5.jpg"
+                                            data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                        <div class="text-main">
+                                            <div class="text-group">
+                                                <div class="text">
+                                                    <div class="attachment">
+                                                        <button class="btn attach"><i
+                                                                class="material-icons md-18">insert_drive_file</i></button>
+                                                        <div class="file">
+                                                            <h5><a href="#">Tenacy Agreement.pdf</a></h5>
+                                                            <span>24kb Document</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span>11:07 PM</span>
+                                        </div>
+                                    </div>
+                                    <div class="message me">
+                                        <div class="text-main">
+                                            <div class="text-group me">
+                                                <div class="text me">
+                                                    <p>Hope you're all ready to tackle this great project. Let's
+                                                        smash some Brand Concept & Design!</p>
+                                                </div>
+                                            </div>
+                                            <span><i class="material-icons">check</i>10:21 PM</span>
+                                        </div>
+                                    </div>
+                                    <div class="message">
+                                        <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-5.jpg"
+                                            data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                        <div class="text-main">
+                                            <div class="text-group">
+                                                <div class="text typing">
+                                                    <div class="wave">
+                                                        <span class="dot"></span>
+                                                        <span class="dot"></span>
+                                                        <span class="dot"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <span>11:07 PM</span>
-                                </div>
-                            </div>
-                            <div class="message me">
-                                <div class="text-main">
-                                    <div class="text-group me">
-                                        <div class="text me">
-                                            <p>Hope you're all ready to tackle this great project. Let's
-                                                smash some Brand Concept & Design!</p>
-                                        </div>
-                                    </div>
-                                    <span><i class="material-icons">check</i>10:21 PM</span>
-                                </div>
-                            </div>
-                            <div class="message">
-                                <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-5.jpg"
-                                    data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-                                <div class="text-main">
-                                    <div class="text-group">
-                                        <div class="text typing">
-                                            <div class="wave">
-                                                <span class="dot"></span>
-                                                <span class="dot"></span>
-                                                <span class="dot"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
+                                    </div> -->
                         </div>
                     </div>
                 </div>

@@ -30,13 +30,17 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     message: string = '';
     imageUrl: any;
     selectedFile: any;
-    imagePath: any = imagePath
+    imagePath: any = imagePath;
+    allGroups: any[] = [];
+    loginUser: any;
 
     constructor(private route: ActivatedRoute, private auth: AuthService, private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
 
         this.socket = io(serverUrl);
         this.senderId = localStorage.getItem('userId');
+        this.loginUser = localStorage.getItem('user_data');
+        this.loginUser =  JSON.parse( this.loginUser);
 
         this.commonService.groupDataEmitter.subscribe((data) => {
             this.receiverId = data?.id;
@@ -55,6 +59,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
             receiverId: ['', Validators.required]
         });
 
+        this.getAllGroups()
         if (this.chatType == 'group') {
             // this.getGroupMessages();
             this.socket.on('chatGroupMessage', (data) => {
@@ -101,6 +106,8 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                 } else if (result.success == true) {
                     this.selectedGroup = result.group;
                     this.receiverId = result.group.id;
+                    console.log(this.selectedGroup);
+                    
                 }
             });
     }
@@ -185,6 +192,30 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         reader.readAsDataURL(this.selectedFile as Blob);
     }
 
+    getAllGroups() {
+        var endPoint = 'group'
+        this.auth.sendRequest('get', endPoint, null)
+            .subscribe((result: any) => {
+                if (result.success == false) {
+
+                } else if (result.success == true) {
+                    this.allGroups = [];
+                    this.allGroups = result.groups
+                    // result.group.user.forEach((element:any) => {
+                    //     if(element.id == this.userId){
+
+                    //     }
+                    // });
+                    this.selectedGroups(this.allGroups[0]);
+                }
+            });
+    }
+
+    selectedGroups(groupData: any) {
+        this.commonService.sendGroupData(groupData)
+    }
+
+
     isImage(message: string): boolean {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'];  // Add more extensions if needed
         const lowerCaseMessage = message.toLowerCase();
@@ -193,7 +224,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
 
     getImageUrl(message: string): string {
         // Assuming your images are stored in the 'uploads' folder
-        return this.imagePath + `/${message.replace('\\', '/')}`;
+        return this.imagePath + `/${message?.replace('\\', '/')}`;
     }
 
     ngOnDestroy(): void {
