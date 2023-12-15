@@ -7,6 +7,7 @@ import { io, Socket } from "socket.io-client";
 import { serverUrl } from 'src/environments/environment';
 import { imagePath } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 
 @Component({
@@ -36,6 +37,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     loginUser: any;
 
     allUsers: any[] = [];
+    messagesss: any;
 
     constructor(private route: ActivatedRoute, private auth: AuthService,
         private commonService: CommonService, private dialog: MatDialog,
@@ -64,6 +66,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
         // Example: Listen for chatMessage events from the server
         this.socket.on('chatMessage', (message: any) => {
+            this.commonService.listen();
             this.getMessages();
         });
 
@@ -148,11 +151,15 @@ export class ChatComponent implements OnInit, OnDestroy {
         return imageExtensions.some(ext => lowerCaseMessage.endsWith(ext));
     }
 
-    getImageUrl(message: string): string {
+  
+    getImageUrl(message: string,type:string): string {
         // Assuming your images are stored in the 'uploads' folder
-        return this.imagePath + `/${message?.replace('\\', '/')}`;
+        if(type == 'social_image'){
+            return `${message.replace('\\', '/')}`;
+        }else{
+            return this.imagePath + `/${message?.replace('\\', '/')}`;
+        }
     }
-
     sendMessage() {
         var chatData: any;
         var endPoint: any
@@ -179,6 +186,7 @@ export class ChatComponent implements OnInit, OnDestroy {
                         if (this.chatType == 'single') {
                             this.socket.emit('user-message', chatData, (error: any) => { })
                             this.getMessages();
+                            this.commonService.requestPermission();
                         }
                         this.chatForm.reset();
                         this.message = '';

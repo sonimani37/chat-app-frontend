@@ -30,7 +30,8 @@
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "./src/assets/js/vendor/popper.min.js",
               "./src/assets/js/bootstrap.min.js",
-              "./src/assets/js/vendor/jquery-slim.min.js"
+              "./src/assets/js/vendor/jquery-slim.min.js",
+              "./src/firebase-messaging-sw.js"
             ]
           },
           "configurations": {

@@ -123,9 +123,13 @@ export class SidebarComponent {
         this.router.navigate(['/my-profile']);
     }
 
-    getImageUrl(message: string): string {
+    getImageUrl(message: string,type:string): string {
         // Assuming your images are stored in the 'uploads' folder
-        return this.imagePath + `/${message.replace('\\', '/')}`;
+        if(type == 'social_image'){
+            return `${message.replace('\\', '/')}`;
+        }else{
+            return this.imagePath + `/${message.replace('\\', '/')}`;
+        }
     }
 
     uploadFile(event: any) {

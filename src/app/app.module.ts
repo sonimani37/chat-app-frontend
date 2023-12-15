@@ -21,6 +21,11 @@ import { ToastrModule } from 'ngx-toastr';
 import { MyProfileComponent } from './components/profiles/my-profile/my-profile.component';
 import { ForgetPasswordComponent } from './components/Authentication/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './components/Authentication/reset-password/reset-password.component';
+import { environment } from 'src/environments/environment';
+import { initializeApp } from "firebase/app";
+import { ServiceWorkerModule } from '@angular/service-worker';
+
+initializeApp(environment.firebase);
 
 @NgModule({
     declarations: [
@@ -54,6 +59,7 @@ import { ResetPasswordComponent } from './components/Authentication/reset-passwo
         preventDuplicates: true,
         closeButton: true,
       }),
+      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     ],
     providers: [],
     bootstrap: [AppComponent]

@@ -9,7 +9,7 @@
                         <div class="col-md-18">
                             <div class="inside">
                                 <a *ngIf="selectedUser">
-                                    <img class="avatar-md" [src]="getImageUrl(selectedUser?.UserImages.filePath)"
+                                    <img class="avatar-md" [src]="getImageUrl(selectedUser?.UserImages.filePath,selectedUser?.UserImages.fileType)"
                                         data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
                                 </a>
                                 <div class="status">
@@ -57,7 +57,7 @@
                                     </div> -->
                             <div *ngFor="let item of previousMsgs">
                                 <div class="message" *ngIf="item.isReceiver == true">
-                                    <img class="avatar-md" [src]="getImageUrl(selectedUser?.UserImages?.filePath)"
+                                    <img class="avatar-md" [src]="getImageUrl(selectedUser?.UserImages?.filePath,selectedUser?.UserImages.fileType)"
                                         data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
                                     <div class="text-main">
                                         <div class="text-group">
@@ -65,7 +65,7 @@
                                                 <p>{{ item.message }}</p>
                                             </div>
                                             <ng-container *ngIf="isImage(item.message)">
-                                                <img [src]="getImageUrl(item.message)" alt="Image" width=200px;
+                                                <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
                                                     height=200px>
                                             </ng-container>
                                         </div>
@@ -83,7 +83,7 @@
                                                 <p>{{ item.message }}</p>
                                             </div>
                                             <ng-container *ngIf="isImage(item.message)">
-                                                <img [src]="getImageUrl(item.message)" alt="Image" width=200px;
+                                                <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
                                                     height=200px>
                                             </ng-container>
                                         </div>
