@@ -15,7 +15,7 @@ import { SidebarComponent } from './components/shared/sidebar/sidebar.component'
 import { LayoutComponent } from './components/shared/layout/layout.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ImagePreviewModalComponent } from './components/shared/image-preview-modal/image-preview-modal.component';
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { GroupChatComponent } from './components/chat/group-chat/group-chat.component';
 import { ToastrModule } from 'ngx-toastr';
 import { MyProfileComponent } from './components/profiles/my-profile/my-profile.component';
@@ -26,6 +26,15 @@ import { initializeApp } from "firebase/app";
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 initializeApp(environment.firebase);
+
+// Register the service worker
+navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then((registration) => {
+        console.log('Service Worker registered with scope:', registration.scope);
+    })
+    .catch((error) => {
+        console.error('Service Worker registration failed:', error);
+    });
 
 @NgModule({
     declarations: [
@@ -53,13 +62,13 @@ initializeApp(environment.firebase);
         BrowserAnimationsModule,
         MatDialogModule,
         ToastrModule.forRoot({
-        timeOut: 2000,
-        disableTimeOut: false,
-        positionClass: 'toast-top-right',
-        preventDuplicates: true,
-        closeButton: true,
-      }),
-      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+            timeOut: 2000,
+            disableTimeOut: false,
+            positionClass: 'toast-top-right',
+            preventDuplicates: true,
+            closeButton: true,
+        }),
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     ],
     providers: [],
     bootstrap: [AppComponent]

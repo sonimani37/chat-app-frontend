@@ -6,6 +6,7 @@ import { environment } from "@env/environment"
 @Injectable({
     providedIn: 'root'
 })
+
 export class CommonService {
 
     userDataEmitter: EventEmitter<any> = new EventEmitter<any>();
@@ -37,15 +38,21 @@ export class CommonService {
             this.message = payload;
             // Increment the unread notification count
             this.unreadNotificationCount++;
+
+            // // Increment the unread notification count only if the page is not focused
+            // if (!document.hasFocus()) {
+            //     this.unreadNotificationCount++;
+            // }
             // Update the title with the unread count
             this.updateTitleBadge();
         });
     }
 
     updateTitleBadge() {
+        console.log(this.unreadNotificationCount);
+        
         // Check if the Notification API is supported
         if ('Notification' in window) {
-
             // // Check if the current page is focused
             // if (document.hasFocus()) {
             //     return; // Do not show badge if the page is focused
@@ -55,7 +62,7 @@ export class CommonService {
             if (Notification.permission === 'granted') {
                 // Create a notification badge
                 document.title = `🔔(${this.unreadNotificationCount}) Notification`;
-                document.addEventListener('click', this.onDocumentTitleClick.bind(this));
+                // document.addEventListener('click', this.onDocumentTitleClick.bind(this));
 
                 const notification = new Notification('New Notification', {
                     // You can customize the notification options here
@@ -77,7 +84,7 @@ export class CommonService {
     onDocumentTitleClick() {
         // Handle the click on the document title
         this.markNotificationsAsRead();
-      }
+    }
 
     // Call this function when a user reads the notifications
     markNotificationsAsRead() {
@@ -90,12 +97,15 @@ export class CommonService {
     requestPermission() {
         const messaging = getMessaging();
         console.log(messaging);
+        console.log( environment.firebase.vapidKey);
 
         getToken(messaging, { vapidKey: environment.firebase.vapidKey })
             .then((currentToken) => {
+                console.log(currentToken);
+                
                 if (currentToken) {
                     console.log("we got the token.....");
-                    console.log(currentToken);
+                  
                     this.sendFcmNotification(currentToken)
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
@@ -106,6 +116,7 @@ export class CommonService {
     }
 
     sendFcmNotification(serverKey: any) {
+        console.log(serverKey);
         const headers = new HttpHeaders({
             'Authorization': `key=AAAAFG1aWd8:APA91bEWB74HoPrLMe-Tpo4NDROBPzc87xxxGFUNafZwV-hxfBQKEqLJq6TRyMGk3Z0Sh6LALSt_cjdQFnaayhiohGG5nWaCaIs7Xdtib4l-b83pqS-NpiU36Z9orx3GaA3Iru9tqU2t`,
             'Content-Type': 'application/json'
@@ -117,14 +128,16 @@ export class CommonService {
                 body: 'Hello from angular app',
                 // icon: '../assets/731657547631815CRISTIANORONALDOMenSetOf2CR7GameOnEaudeToiletteCR7BodySprayC1.jpg',
                 // image: '../assets/1671012101618-PERFUMERS-CLUB-Women-Set-of-7-Complete-Fragrance-Eau-De-Parf-5.jpg',
-                vibrate: [200, 100, 200],
-                data: {
-                    customKey1: 'Custom Value 1',
-                    customKey2: 'Custom Value 2',
-                },
+                // vibrate: [200, 100, 200],
+                // data: {
+                //     customKey1: 'Custom Value 1',
+                //     customKey2: 'Custom Value 2',
+                // },
             },
             to: `${serverKey}`
         };
+        console.log(this.fcmUrl);
+        
         this.http.post(this.fcmUrl, notificationData, { headers })
             .subscribe(
                 (response) => {
