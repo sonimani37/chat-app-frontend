@@ -38,7 +38,7 @@ export class NavbarComponent {
 
   getImageUrl(message: string): string {
     // Assuming your images are stored in the 'uploads' folder
-    return this.imagePath + `/${message.replace('\\', '/')}`;
+    return this.imagePath + `/${message?.replace('\\', '/')}`;
 }
 
 

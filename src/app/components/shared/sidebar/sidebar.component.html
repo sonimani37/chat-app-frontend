@@ -486,7 +486,7 @@
                 <!-- Start of Settings -->
                 <div id="settings" class="tab-pane fade" id="settings" [ngClass]="{ 'active show' : activeSettingClass == true }">
                     <div class="settings">
-                        <div class="profile">  <img class="avatar-xl" [src]="getImageUrl(loginUser.userImage.filePath,loginUser.userImage.fileType)" alt="avatar">                           
+                        <div class="profile">  <img class="avatar-xl" [src]="getImageUrl(loginUser?.userImage?.filePath,loginUser?.userImage?.fileType)" alt="avatar">                           
                                                       
                             <h1><a>{{ loginUser?.firstname }} {{ loginUser?.lastname }}</a></h1>
                             <!-- <span>Helena, Montana</span> -->

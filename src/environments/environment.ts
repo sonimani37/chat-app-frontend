@@ -17,9 +17,9 @@ export const environment = {
 	},
 };
 
-export const baseUrl = 'http://localhost:7000/api/';
-export const serverUrl = 'http://localhost:7000';
-export const imagePath = 'http://localhost:7000';
+export const baseUrl = 'https://metawin-backend.mangoitsol.com/api/';
+export const serverUrl = 'https://metawin-backend.mangoitsol.com';
+export const imagePath = 'https://metawin-backend.mangoitsol.com';
 
 // export const baseUrl = 'http://103.127.29.85/mangoproject/public/api/'
 /*

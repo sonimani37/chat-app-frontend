@@ -128,7 +128,7 @@ export class SidebarComponent {
         if(type == 'social_image'){
             return `${message.replace('\\', '/')}`;
         }else{
-            return this.imagePath + `/${message.replace('\\', '/')}`;
+            return this.imagePath + `/${message?.replace('\\', '/')}`;
         }
     }
 
