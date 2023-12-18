@@ -50,26 +50,25 @@ export class CommonService {
 
     updateTitleBadge() {
         console.log(this.unreadNotificationCount);
-        
+
         // Check if the Notification API is supported
         if ('Notification' in window) {
+
             // // Check if the current page is focused
             // if (document.hasFocus()) {
             //     return; // Do not show badge if the page is focused
             // }
 
-            // Check if permission to display notifications has been granted
+                    // Check if permission to display notifications has been granted
             if (Notification.permission === 'granted') {
+                console.log('innnnnnnnnnn')
                 // Create a notification badge
                 document.title = `🔔(${this.unreadNotificationCount}) Notification`;
-                // document.addEventListener('click', this.onDocumentTitleClick.bind(this));
 
                 const notification = new Notification('New Notification', {
-                    // You can customize the notification options here
-                    // For example, you can set an icon, body, etc.
-                    // body: 'Notification body text',
-                    icon: '../../../assets/img/favicon.png', // Provide the correct path to your icon
-                });
+                    // You can customize the notification options here For example, you can set an icon, body, etc.
+                    body: 'Notification body text',
+                    icon: '../../../assets/img/favicon.png',                         });
 
                 // You can add an event listener to handle clicks on the notification
                 notification.onclick = () => {
@@ -78,18 +77,13 @@ export class CommonService {
                     this.markNotificationsAsRead();
                 };
             }
-        }
-    }
 
-    onDocumentTitleClick() {
-        // Handle the click on the document title
-        this.markNotificationsAsRead();
+        }
     }
 
     // Call this function when a user reads the notifications
     markNotificationsAsRead() {
         this.unreadNotificationCount = 0;
-
         // Update the title without the unread count
         document.title = 'Conversa Connect';
     }
@@ -102,10 +96,10 @@ export class CommonService {
         getToken(messaging, { vapidKey: environment.firebase.vapidKey })
             .then((currentToken) => {
                 console.log(currentToken);
-                
+
                 if (currentToken) {
                     console.log("we got the token.....");
-                  
+
                     this.sendFcmNotification(currentToken)
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
@@ -126,18 +120,19 @@ export class CommonService {
             notification: {
                 title: 'Notification',
                 body: 'Hello from angular app',
-                // icon: '../assets/731657547631815CRISTIANORONALDOMenSetOf2CR7GameOnEaudeToiletteCR7BodySprayC1.jpg',
-                // image: '../assets/1671012101618-PERFUMERS-CLUB-Women-Set-of-7-Complete-Fragrance-Eau-De-Parf-5.jpg',
-                // vibrate: [200, 100, 200],
-                // data: {
-                //     customKey1: 'Custom Value 1',
-                //     customKey2: 'Custom Value 2',
-                // },
+                icon: '../../../assets/img/favicon.png',
+                image: '../../../assets/img/faces/clem-onojeghuo-1.jpg',
+                vibrate: [200, 100, 200],
+                data: {
+                    customKey1: 'Custom Value 1',
+                    customKey2: 'Custom Value 2',
+                },
             },
             to: `${serverKey}`
         };
+        console.log(notificationData)
         console.log(this.fcmUrl);
-        
+
         this.http.post(this.fcmUrl, notificationData, { headers })
             .subscribe(
                 (response) => {

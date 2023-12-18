@@ -1,5 +1,5 @@
-importScripts("https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js");
 firebase.initializeApp({
     apiKey: "AIzaSyBJkXXNgvFJtbjHaTFNLJlh0Grjw9gJa34",
     authDomain: "conversaconnect.firebaseapp.com",

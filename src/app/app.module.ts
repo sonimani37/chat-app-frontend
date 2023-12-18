@@ -24,17 +24,18 @@ import { ResetPasswordComponent } from './components/Authentication/reset-passwo
 import { environment } from 'src/environments/environment';
 import { initializeApp } from "firebase/app";
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { FirebaseService } from '@core/services/firebase.service';
 
 initializeApp(environment.firebase);
 
-// Register the service worker
-navigator.serviceWorker.register('/firebase-messaging-sw.js')
-    .then((registration) => {
-        console.log('Service Worker registered with scope:', registration.scope);
-    })
-    .catch((error) => {
-        console.error('Service Worker registration failed:', error);
-    });
+// // Register the service worker'/firebase-messaging-sw.js
+// navigator.serviceWorker.register('./../../../chat-app-frontend/src/firebase-messaging-sw.js')
+//     .then((registration) => {
+//         console.log('Service Worker registered with scope:', registration.scope);
+//     })
+//     .catch((error) => {
+//         console.error('Service Worker registration failed:', error);
+//     });
 
 @NgModule({
     declarations: [
@@ -70,7 +71,7 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js')
         }),
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     ],
-    providers: [],
+    providers: [FirebaseService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
