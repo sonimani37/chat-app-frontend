@@ -16,8 +16,16 @@ export class CommonService {
     message: any = null;
     fcmUrl = 'https://fcm.googleapis.com/fcm/send';
     unreadNotificationCount = 0;
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D | any;
 
-    constructor(public http: HttpClient) { }
+
+    constructor(public http: HttpClient) {
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = 16;
+        this.canvas.height = 16;
+        this.context = this.canvas.getContext('2d');
+    }
 
     sendUserData(userData: any): void {
         this.userDataEmitter.emit(userData);
@@ -33,20 +41,28 @@ export class CommonService {
 
     listen() {
         const messaging = getMessaging();
-        onMessage(messaging, (payload) => {
+        onMessage(messaging, (payload: any) => {
+            console.log(payload);
+            // let currentUserId = localStorage.getItem('userId');
+            // let notification = payload?.notification?.body ? JSON.parse(payload?.notification?.body) : {};
+
+            // if (currentUserId == notification.receiverId) {
             // Update the title with a notification badge
             this.message = payload;
             // Increment the unread notification count
             this.unreadNotificationCount++;
 
-            // // Increment the unread notification count only if the page is not focused
+            // Increment the unread notification count only if the page is not focused
             // if (!document.hasFocus()) {
             //     this.unreadNotificationCount++;
             // }
             // Update the title with the unread count
             this.updateTitleBadge();
+            // }
+
         });
     }
+
 
     updateTitleBadge() {
         console.log(this.unreadNotificationCount);
@@ -54,28 +70,35 @@ export class CommonService {
         // Check if the Notification API is supported
         if ('Notification' in window) {
 
-            // // Check if the current page is focused
-            // if (document.hasFocus()) {
-            //     return; // Do not show badge if the page is focused
-            // }
+            // Check if the current page is focused
+            if (document.hasFocus()) {
+                return; // Do not show badge if the page is focused
+            }
 
-                    // Check if permission to display notifications has been granted
+            // Check if permission to display notifications has been granted
             if (Notification.permission === 'granted') {
-                console.log('innnnnnnnnnn')
-                // Create a notification badge
-                document.title = `🔔(${this.unreadNotificationCount}) Notification`;
+                // Clear canvas
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-                const notification = new Notification('New Notification', {
-                    // You can customize the notification options here For example, you can set an icon, body, etc.
-                    body: 'Notification body text',
-                    icon: '../../../assets/img/favicon.png',                         });
+                // Draw a red circle (you can customize the appearance)
+                this.context.beginPath();
+                this.context.arc(8, 8, 8, 0, 2 * Math.PI);
+                this.context.fillStyle = 'red';
+                this.context.fill();
 
-                // You can add an event listener to handle clicks on the notification
-                notification.onclick = () => {
-                    // Handle the click event as needed (e.g., navigate to a specific page)
-                    console.log('Notification clicked');
-                    this.markNotificationsAsRead();
-                };
+                // Draw the count in white
+                this.context.fillStyle = 'white';
+                this.context.font = '9px sans-serif';
+                this.context.textAlign = 'center';
+                this.context.textBaseline = 'middle';
+                this.context.fillText(this.unreadNotificationCount.toString(), 8, 8);
+
+                // Update the favicon
+                const link: any = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                link.type = 'image/x-icon';
+                link.rel = 'shortcut icon';
+                link.href = this.canvas.toDataURL('image/x-icon');
+                document.head.appendChild(link);
             }
 
         }
@@ -88,19 +111,13 @@ export class CommonService {
         document.title = 'Conversa Connect';
     }
 
-    requestPermission() {
+    requestPermission(data?: any) {
         const messaging = getMessaging();
-        console.log(messaging);
-        console.log( environment.firebase.vapidKey);
 
         getToken(messaging, { vapidKey: environment.firebase.vapidKey })
             .then((currentToken) => {
-                console.log(currentToken);
-
                 if (currentToken) {
-                    console.log("we got the token.....");
-
-                    this.sendFcmNotification(currentToken)
+                    this.sendFcmNotification(currentToken, data)
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
                 }
@@ -109,8 +126,7 @@ export class CommonService {
             });
     }
 
-    sendFcmNotification(serverKey: any) {
-        console.log(serverKey);
+    sendFcmNotification(serverKey: any, data?: any) {
         const headers = new HttpHeaders({
             'Authorization': `key=AAAAFG1aWd8:APA91bEWB74HoPrLMe-Tpo4NDROBPzc87xxxGFUNafZwV-hxfBQKEqLJq6TRyMGk3Z0Sh6LALSt_cjdQFnaayhiohGG5nWaCaIs7Xdtib4l-b83pqS-NpiU36Z9orx3GaA3Iru9tqU2t`,
             'Content-Type': 'application/json'
@@ -119,7 +135,7 @@ export class CommonService {
         const notificationData = {
             notification: {
                 title: 'Notification',
-                body: 'Hello from angular app',
+                body: data,
                 icon: '../../../assets/img/favicon.png',
                 image: '../../../assets/img/faces/clem-onojeghuo-1.jpg',
                 vibrate: [200, 100, 200],
@@ -130,8 +146,6 @@ export class CommonService {
             },
             to: `${serverKey}`
         };
-        console.log(notificationData)
-        console.log(this.fcmUrl);
 
         this.http.post(this.fcmUrl, notificationData, { headers })
             .subscribe(

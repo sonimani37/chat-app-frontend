@@ -47,7 +47,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
         this.senderId = localStorage.getItem('userId');
         this.loginUser = localStorage.getItem('user_data');
-        this.loginUser =  JSON.parse( this.loginUser);
+        this.loginUser = JSON.parse(this.loginUser);
         this.commonService.userDataEmitter.subscribe((data) => {
             this.receiverId = data.id;
             this.getUser(this.receiverId)
@@ -107,8 +107,8 @@ export class ChatComponent implements OnInit, OnDestroy {
                 if (result.success == false) {
 
                 } else if (result.success == true) {
-                    this.selectedUser = result.user; 
-                    
+                    this.selectedUser = result.user;
+
                     this.receiverId = this.selectedUser.id;
                 }
             });
@@ -151,12 +151,12 @@ export class ChatComponent implements OnInit, OnDestroy {
         return imageExtensions.some(ext => lowerCaseMessage.endsWith(ext));
     }
 
-  
-    getImageUrl(message: string,type:string): string {
+
+    getImageUrl(message: string, type: string): string {
         // Assuming your images are stored in the 'uploads' folder
-        if(type == 'social_image'){
+        if (type == 'social_image') {
             return `${message.replace('\\', '/')}`;
-        }else{
+        } else {
             return this.imagePath + `/${message?.replace('\\', '/')}`;
         }
     }
@@ -166,7 +166,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         var formData: any = new FormData();
         this.chatForm.controls['receiverId'].setValue(this.receiverId);
         this.chatForm.controls['senderId'].setValue(this.senderId);
-        if(this.chatForm.valid){
+        if (this.chatForm.valid) {
             if (this.chatType == 'single') {
                 endPoint = 'chat/send-message'
                 formData.append("message", this.chatForm.value.message);
@@ -186,12 +186,12 @@ export class ChatComponent implements OnInit, OnDestroy {
                         if (this.chatType == 'single') {
                             this.socket.emit('user-message', chatData, (error: any) => { })
                             this.getMessages();
-                            this.commonService.requestPermission();
+                            this.commonService.requestPermission({ data: this.chatForm.value, senderId: this.senderId, receiverId: this.receiverId });
                         }
                         this.chatForm.reset();
                         this.message = '';
                     }
-            })
+                })
         }
     }
 
