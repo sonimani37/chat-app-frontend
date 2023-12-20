@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { CommonService } from '@core/services/common.service';
+import { FirebaseService } from '@core/services/firebase.service';
 import { ToastrMessagesService } from '@core/services/toastr-messages.service';
 import { serverUrl } from '@env/environment';
 import { io, Socket } from "socket.io-client";
@@ -19,8 +21,8 @@ export class SignInComponent implements OnInit {
     response: any;
     socket: Socket;
 
-    constructor(private formBuilder: UntypedFormBuilder, private router: Router, private auth: AuthService,
-        private route: ActivatedRoute,private toastrMessage: ToastrMessagesService) {
+    constructor(private formBuilder: UntypedFormBuilder, private router: Router, private auth: AuthService, private commonService: CommonService,
+        private route: ActivatedRoute,private toastrMessage: ToastrMessagesService,private firebaeService: FirebaseService) {
             this.socket = io(serverUrl);
          }
 
@@ -48,12 +50,12 @@ export class SignInComponent implements OnInit {
                   if (result.success == false) {
                     this.responseMessage = result.error;
                     console.log(this.responseMessage);
-                    
+
                     this.toastrMessage.showError(this.responseMessage, null);
                   } else if (result.success == true) {
                       this.responseMessage = result.successmessage;
                       console.log(result);
-                      
+
                     this.toastrMessage.showSuccess(this.responseMessage, null);
                       localStorage.setItem('token', result['token'])
                       localStorage.setItem('user_data', JSON.stringify(result['user']));
@@ -64,7 +66,8 @@ export class SignInComponent implements OnInit {
                     //   localStorage.setItem('contact', result['user']['contact'])
                       this.router.navigate(["/my-profile"]);
                       this.signinForm.reset();
-                      this.socket.emit('status-change', { userId: result['user']['id'], status: 'online' })
+                      this.socket.emit('status-change', { userId: result['user']['id'], status: 'online' });
+                      this.firebaeService.requestPermission({ userId: result['user']['id'] });
                   }
               })
         }

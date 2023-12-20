@@ -15,7 +15,7 @@ export class NavbarComponent {
   imagePath: any = imagePath;
   socket: Socket;
 
-  constructor(public router: Router, private commonService: CommonService,private auth: AuthService) { 
+  constructor(public router: Router, private commonService: CommonService,private auth: AuthService) {
 
     this.socket = io(serverUrl);
   }
@@ -23,13 +23,13 @@ export class NavbarComponent {
   ngOnInit(): void {
     let data:any = localStorage.getItem('user_data');
     this.loginUserData = JSON.parse(data);
-
+    console.log(this.loginUserData)
       // // In your Angular component
       //   this.socket.on('userStatusChange', (data) => {
       //     // Update user status in the UI based on the received data
       //     console.log('User status change:', data);
       // });
-    
+
   }
 
   onMenuClick(selectedMenu:any){
@@ -56,7 +56,7 @@ export class NavbarComponent {
                 this.socket.emit('status-change', { status: 'online' })
               }
           });
-  
+
     this.router.navigate(["/"]);
 
   }

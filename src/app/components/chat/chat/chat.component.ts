@@ -67,6 +67,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         // Example: Listen for chatMessage events from the server
         this.socket.on('chatMessage', (message: any) => {
             this.commonService.listen();
+            console.log(message)
             this.getMessages();
         });
 
@@ -177,7 +178,7 @@ export class ChatComponent implements OnInit, OnDestroy {
                 }
             }
             this.auth.sendRequest('post', endPoint, formData).subscribe(
-                (result: any) => {
+                async (result: any) => {
                     if (result.success == false) {
 
                     } else if (result.success == true) {

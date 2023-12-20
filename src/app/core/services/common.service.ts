@@ -112,11 +112,14 @@ export class CommonService {
     }
 
     requestPermission(data?: any) {
+        console.log(data)
         const messaging = getMessaging();
-
+        console.log(messaging)
         getToken(messaging, { vapidKey: environment.firebase.vapidKey })
             .then((currentToken) => {
                 if (currentToken) {
+                    console.log(currentToken);
+
                     this.sendFcmNotification(currentToken, data)
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
