@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { map } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { baseUrl } from '@env/environment';
 import { HttpClient, HttpErrorResponse, HttpHeaders, } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class AuthService {
+	userImage = new BehaviorSubject<any>(true);
 
-  constructor(private http: HttpClient, private router: Router) { }
+	constructor(private http: HttpClient, private router: Router) { }
 
-  sendRequest(method: string, endPoint: string, data: any) {
+	sendRequest(method: string, endPoint: string, data: any) {
 		return this.actualSendRequest(method, endPoint, data);
 	}
 
@@ -72,7 +73,7 @@ export class AuthService {
 		} else {
 			return this.http.get(endPointUrl, { headers: myHeaders }).pipe(
 				map(data => {
-				return data
+					return data
 				}),
 				// catchError(error => {
 				//   return this.handleError(error);
@@ -81,11 +82,10 @@ export class AuthService {
 		}
 	}
 
-	
-    IsLoggedIn() {
-        //it returns a boolean value, if the token exsist then true else vice versa
-        return !!localStorage.getItem('token');
 
-    }
+	IsLoggedIn() {
+		//it returns a boolean value, if the token exsist then true else vice versa
+		return !!localStorage.getItem('token');
+
+	}
 }
- 

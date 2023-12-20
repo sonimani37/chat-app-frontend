@@ -16,7 +16,6 @@ export class FirebaseService {
         getToken(messaging, { vapidKey: environment.firebase.vapidKey })
             .then((currentToken) => {
                 if (currentToken) {
-                    console.log(currentToken);
                     this.sendTokenToBackend(data.userId,currentToken);
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
@@ -28,20 +27,10 @@ export class FirebaseService {
 
 
     sendTokenToBackend(userId:any,token: string) {
-
-        let tokenData ={
-            userId: userId,
-            fcmtoken: token
-        }
-        var endPoint = '/store-fcm-token'
-        this.auth.sendRequest('post', endPoint, tokenData ).subscribe(
+        var endPoint = 'updateProfile/' + userId
+        this.auth.sendRequest('post', endPoint, {fcmtoken:token} ).subscribe(
             (result: any) => {
                 console.log(result)
-                // if (result.success == false) {
-
-                // } else if (result.success == true) {
-
-                // }
             })
     }
 }

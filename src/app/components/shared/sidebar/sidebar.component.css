@@ -1,3 +1,10 @@
-.sidebar .nav li.active > a{
+.sidebar .nav li.active>a {
     font-weight: 400 !important;
+}
+
+.upload-profile-setting {
+    position: absolute;
+    top: 5%;
+    left: 37%;
+    opacity: 0;
 }

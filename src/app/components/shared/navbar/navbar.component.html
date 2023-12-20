@@ -4,19 +4,22 @@
         <div class="inside">
             <div class="nav nav-tab menu">
                 <button class="btn">
-                    <img class="avatar-xl" [src]="getImageUrl(loginUserData?.userImage?.filePath)"  alt="avatar">
-
+                    <img class="avatar-xl" [src]="getImageUrl(loginUserData?.UserImages?.filePath)" alt="avatar">
+                    <form (ngSubmit)="onSubmit()" #imageForm="ngForm">
+                        <input class="upload-profile" type="file" (change)="onFileSelected($event)" accept="image/*" />
+                    </form>
                 </button>
                 <!-- <a href="#members" data-toggle="tab">
                   <i class="material-icons">account_circle</i>
                 </a>  -->
                 <!-- <a >{{ loginUserData?.firtname}} {{ loginUserData?.lastname}}</a> -->
                 <!-- <a >{{ loginUserData?.firtname?.charAt(0) }} {{ loginUserData?.lastname?.charAt(0) }}</a> -->
-                <a  data-toggle="tab" class="active" [routerLink]="['/chat']" routerLinkActive="router-link-active" (click)="onMenuClick('singleChat')" >
-                  <i class="material-icons active">chat_bubble_outline</i>
+                <a data-toggle="tab" class="active" [routerLink]="['/chat']" routerLinkActive="router-link-active"
+                    (click)="onMenuClick('singleChat')">
+                    <i class="material-icons active">chat_bubble_outline</i>
                 </a>
-                <a   data-toggle="tab"  [routerLink]="['/group-chat']"   (click)="onMenuClick('groupChat')">
-                  <i class="material-icons active">account_circle</i>
+                <a data-toggle="tab" [routerLink]="['/group-chat']" (click)="onMenuClick('groupChat')">
+                    <i class="material-icons active">account_circle</i>
                 </a>
                 <!-- <a href="#notifications" data-toggle="tab" class="f-grow1">
                   <i class="material-icons">notifications_none</i>
@@ -24,8 +27,8 @@
                 <button class="btn mode">
                   <i class="material-icons">brightness_2</i>
                 </button>-->
-                <a  data-toggle="tab" [routerLink]="['/my-profile']"  (click)="onMenuClick('settings')">
-                  <i class="material-icons">settings</i>
+                <a data-toggle="tab" [routerLink]="['/my-profile']" (click)="onMenuClick('settings')">
+                    <i class="material-icons">settings</i>
                 </a>
                 <button class="btn power" (click)="logout();"><i class="material-icons">power_settings_new</i></button>
             </div>

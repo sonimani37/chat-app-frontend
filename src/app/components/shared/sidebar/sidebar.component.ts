@@ -21,24 +21,24 @@ export class SidebarComponent {
     activeGroupClass: boolean = false;
     activeSettingClass: boolean = false;
     imagePath: any = imagePath
-    socket: Socket;
+    socket: Socket | any;
     selectedFile: File | undefined;
     imageUrl: string | undefined;
 
     constructor(private auth: AuthService, private router: Router, private commonService: CommonService) {
-
         this.socket = io(serverUrl);
 
         // In your Angular component
-        this.socket.on('userStatusChange', (data) => {
-            // Update user status in the UI based on the received data
+        this.socket.on('userStatusChange', (data: any) => {
             this.getAllUsers();
         });
+    }
 
+    ngOnInit(): void {
         this.userId = localStorage.getItem('userId');
         let data: any = localStorage.getItem('user_data');
-        this.loginUser = JSON.parse(data)        
-        
+        this.loginUser = JSON.parse(data)
+
         if (this.router.url == '/chat') {
             this.activeSingleClass = true;
         } else if (this.router.url == '/group-chat') {
@@ -64,11 +64,14 @@ export class SidebarComponent {
                 this.activeSingleClass = false;
             }
         });
-    }
 
-    ngOnInit(): void {
         this.getAllUsers();
         this.getAllGroups();
+
+        this.auth.userImage.subscribe((user: any) => {
+            let data: any = localStorage.getItem('user_data');
+            this.loginUser = JSON.parse(data);
+        })
     }
 
     getAllUsers() {
@@ -119,15 +122,15 @@ export class SidebarComponent {
         this.commonService.sendGroupData(groupData)
     }
 
-    goToprofile(){
+    goToprofile() {
         this.router.navigate(['/my-profile']);
     }
 
-    getImageUrl(message: string,type:string): string {
+    getImageUrl(message: string, type: string): string {
         // Assuming your images are stored in the 'uploads' folder
-        if(type == 'social_image'){
+        if (type == 'social_image') {
             return `${message.replace('\\', '/')}`;
-        }else{
+        } else {
             return this.imagePath + `/${message?.replace('\\', '/')}`;
         }
     }
@@ -150,9 +153,9 @@ export class SidebarComponent {
         this.changeProfileImage()
     }
 
-    changeProfileImage(){
-        
-        if(this.selectedFile){
+    changeProfileImage() {
+
+        if (this.selectedFile) {
             console.log(this.selectedFile);
         }
     }
@@ -164,5 +167,31 @@ export class SidebarComponent {
         sessionStorage.clear();
         localStorage.clear();
         this.router.navigate(["/"]);
+    }
+
+    onFileSelected(event: any): void {
+        this.selectedFile = event.target.files[0] as File;
+        this.onSubmit();
+    }
+
+    onSubmit(): void {
+        if (!this.selectedFile) {
+            console.error('No file selected');
+            return;
+        }
+        const formData: FormData = new FormData();
+        formData.append('image', this.selectedFile, this.selectedFile.name);
+
+        var endPoint = 'updateProfile/' + this.loginUser.id
+        this.auth.sendRequest('post', endPoint, formData)
+            .subscribe((result: any) => {
+                if (result.success == false) {
+                } else if (result.success == true) {
+                    localStorage.removeItem('user_data');
+                    localStorage.setItem('user_data', JSON.stringify(result.user));
+                    this.auth.userImage.next(result.user);
+                    this.ngOnInit();
+                }
+            })
     }
 }
