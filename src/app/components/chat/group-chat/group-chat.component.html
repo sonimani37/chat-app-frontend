@@ -83,6 +83,10 @@
                                 <a href="#">
                                     <img class="avatar-md" [src]="getImageUrl(selectedGroup?.filePath)"
                                         data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                    <form #imageForm="ngForm">
+                                        <input class="upload-profile-setting" type="file"
+                                            (change)="onFileSelected($event,selectedGroup?.id)" accept="image/*" />
+                                    </form>
                                 </a>
                                 <div class="status">
                                     <i class="material-icons online">fiber_manual_record</i>

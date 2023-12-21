@@ -25,6 +25,8 @@ import { environment } from 'src/environments/environment';
 import { initializeApp } from "firebase/app";
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { FirebaseService } from '@core/services/firebase.service';
+import { CreateGroupComponent } from '@components/chat/create-group/create-group.component';
+import { MaterialModule } from '@components/shared/material.module';
 
 initializeApp(environment.firebase);
 
@@ -52,6 +54,7 @@ initializeApp(environment.firebase);
         MyProfileComponent,
         ForgetPasswordComponent,
         ResetPasswordComponent,
+        CreateGroupComponent
     ],
     imports: [
         BrowserModule,
@@ -61,7 +64,7 @@ initializeApp(environment.firebase);
         ReactiveFormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
-        MatDialogModule,
+        MaterialModule,
         ToastrModule.forRoot({
             timeOut: 2000,
             disableTimeOut: false,
@@ -70,12 +73,6 @@ initializeApp(environment.firebase);
             closeButton: true,
         }),
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-        // ServiceWorkerModule.register('ngsw-worker.js', {
-        //     enabled: !isDevMode(),
-        //     // Register the ServiceWorker as soon as the application is stable
-        //     // or after 30 seconds (whichever comes first).
-        //     registrationStrategy: 'registerWhenStable:30000'
-        // }),
     ],
     providers: [FirebaseService],
     bootstrap: [AppComponent]

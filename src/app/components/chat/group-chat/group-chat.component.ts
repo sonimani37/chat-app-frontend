@@ -112,6 +112,29 @@ export class GroupChatComponent implements OnInit, OnDestroy {
             });
     }
 
+    onFileSelected(event: any,groupId:any): void {
+        this.selectedFile = event.target.files[0] as File;
+        this.onSubmit(groupId);
+    }
+
+    onSubmit(groupId:any): void {
+        if (!this.selectedFile) {
+            console.error('No file selected');
+            return;
+        }
+        const formData: FormData = new FormData();
+        formData.append('image', this.selectedFile, this.selectedFile.name);
+
+        var endPoint = '/group/update/' + groupId
+        this.auth.sendRequest('post', endPoint, formData)
+            .subscribe((result: any) => {
+                if (result.success == false) {
+                } else if (result.success == true) {
+                    this.ngOnInit();
+                }
+            })
+    }
+
     getGroupMessages() {
         let dataObj = {
             groupId: this.receiverId

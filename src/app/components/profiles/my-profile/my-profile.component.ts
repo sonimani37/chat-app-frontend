@@ -57,13 +57,10 @@ export class MyProfileComponent implements OnInit {
 
     update() {
         this.submitted = true;
-        console.log(this.updateProfileForm);
         if (this.updateProfileForm.valid) {
-            console.log(this.updateProfileForm.value);
             var endPoint = 'updateProfile/' + this.loginUser.id
             this.auth.sendRequest('post', endPoint, this.updateProfileForm.value)
                 .subscribe((result: any) => {
-                    // this.auth.setLoader(false);
                     if (result.success == false) {
                     } else if (result.success == true) {
                         this.responseMessage = result.successmessage;
@@ -71,7 +68,6 @@ export class MyProfileComponent implements OnInit {
                         localStorage.removeItem('user_data'); 
                         localStorage.setItem('user_data',JSON.stringify(result.user));
                         this.ngOnInit();
-                        // this.updateProfileForm.reset();
                     }
                 })
         }

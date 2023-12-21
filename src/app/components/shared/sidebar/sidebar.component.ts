@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { CreateGroupComponent } from '@components/chat/create-group/create-group.component';
 import { AuthService } from '@core/services/auth.service';
 import { CommonService } from '@core/services/common.service';
 import { imagePath } from '@env/environment';
 import { serverUrl } from '@env/environment';
 import { io, Socket } from "socket.io-client";
+
 
 @Component({
     selector: 'app-sidebar',
@@ -25,7 +28,7 @@ export class SidebarComponent {
     selectedFile: File | undefined;
     imageUrl: string | undefined;
 
-    constructor(private auth: AuthService, private router: Router, private commonService: CommonService) {
+    constructor(private auth: AuthService, private router: Router, private commonService: CommonService, private dialog: MatDialog) {
         this.socket = io(serverUrl);
 
         // In your Angular component
@@ -193,5 +196,9 @@ export class SidebarComponent {
                     this.ngOnInit();
                 }
             })
+    }
+
+    showAddGroup() {
+        this.dialog.open(CreateGroupComponent, { });
     }
 }

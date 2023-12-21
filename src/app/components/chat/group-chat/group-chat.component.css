@@ -1,3 +1,6 @@
-.chat {
-    width: 250%;
+.upload-profile-setting {
+    position: absolute;
+    top: 19%;
+    left: 0%;
+    opacity: 0;
 }

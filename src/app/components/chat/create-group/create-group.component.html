@@ -1,44 +1,23 @@
-<div style="padding-top: 8%;">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="card">
-          <h4 class="card-header">Create Group</h4>
-          <div class="card-body">
-
-            <div class="alert alert-success" role="alert" *ngIf="responseMessage">{{responseMessage}}! </div>
-
-            <!-- <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
-
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="firstName">Group Name</label>
-                  <input type="text" formControlName="firstname" class="form-control" />
-                </div>
-              </div>
-
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="lastName">Participants</label>
-
-
-                </div>
-              </div>
-
-              <br>
-              <div class="col-md-12">
-                <div class="form-group">
-                  <button [disabled]="loading" class="btn btn-primary">
-                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                    Register
-                  </button>
-                </div>
-              </div>
-
-            </form> -->
-          </div>
-        </div>
-      </div>
+<div class="card p-4">
+    <h4 class="card-header">Create Group</h4>
+    <div class="card-body">
+        <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" formControlName="name" placeholder="Group Name" class="form-control" />
+                <span class="text-danger" *ngIf="submitted">
+                    <span *ngIf="groupForm.controls['name'].errors?.['required']"> name is
+                        required.</span>
+                </span>
+            </div>
+            <div class="form-group">
+                <label for="Participants">Participants</label>
+                <mat-select class="form-control" formControlName="participants" placeholder="Select Participant"
+                    multiple>
+                    <mat-option *ngFor="let user of allUsers" [value]="user.id">{{user.firstName}}</mat-option>
+                </mat-select>
+            </div>
+            <button class="btn button mt-3"> Add Group </button>
+        </form>
     </div>
-  </div>
 </div>

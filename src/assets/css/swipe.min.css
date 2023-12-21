@@ -538,7 +538,8 @@ input:checked+.slider:before {
 }
 
 .sidebar {
-    background: #fdfdfd
+    background: #f1f1f1;
+    color: #020202;
 }
 
 .sidebar .search {
