@@ -42,23 +42,16 @@ export class CommonService {
     listen() {
         const messaging = getMessaging();
         onMessage(messaging, (payload: any) => {
-            console.log(payload);
-            // let currentUserId = localStorage.getItem('userId');
-            // let notification = payload?.notification?.body ? JSON.parse(payload?.notification?.body) : {};
+            let currentUserId = localStorage.getItem('userId');
+            let notification = payload?.notification?.body ? JSON.parse(payload?.notification?.body) : {};
 
-            // if (currentUserId == notification.receiverId) {
-            // Update the title with a notification badge
-            this.message = payload;
-            // Increment the unread notification count
-            this.unreadNotificationCount++;
-
-            // Increment the unread notification count only if the page is not focused
-            // if (!document.hasFocus()) {
-            //     this.unreadNotificationCount++;
-            // }
-            // Update the title with the unread count
-            this.updateTitleBadge();
-            // }
+            if (currentUserId == notification.receiverId) {
+                this.message = payload;
+                if (!document.hasFocus()) {
+                    this.unreadNotificationCount++;
+                }
+                this.updateTitleBadge();
+            }
 
         });
     }
@@ -71,35 +64,35 @@ export class CommonService {
         if ('Notification' in window) {
 
             // Check if the current page is focused
-            if (document.hasFocus()) {
-                return; // Do not show badge if the page is focused
-            }
+            // if (document.hasFocus()) {
+            //     return; // Do not show badge if the page is focused
+            // }
 
             // Check if permission to display notifications has been granted
-            if (Notification.permission === 'granted') {
-                // Clear canvas
-                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // if (Notification.permission === 'granted') {
+            // Clear canvas
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-                // Draw a red circle (you can customize the appearance)
-                this.context.beginPath();
-                this.context.arc(8, 8, 8, 0, 2 * Math.PI);
-                this.context.fillStyle = 'red';
-                this.context.fill();
+            // Draw a red circle (you can customize the appearance)
+            this.context.beginPath();
+            this.context.arc(8, 8, 8, 0, 2 * Math.PI);
+            this.context.fillStyle = 'red';
+            this.context.fill();
 
-                // Draw the count in white
-                this.context.fillStyle = 'white';
-                this.context.font = '9px sans-serif';
-                this.context.textAlign = 'center';
-                this.context.textBaseline = 'middle';
-                this.context.fillText(this.unreadNotificationCount.toString(), 8, 8);
+            // Draw the count in white
+            this.context.fillStyle = 'white';
+            this.context.font = '11px sans-serif';
+            this.context.textAlign = 'center';
+            this.context.textBaseline = 'middle';
+            this.context.fillText(this.unreadNotificationCount.toString(), 8, 8);
 
-                // Update the favicon
-                const link: any = document.querySelector("link[rel*='icon']") || document.createElement('link');
-                link.type = 'image/x-icon';
-                link.rel = 'shortcut icon';
-                link.href = this.canvas.toDataURL('image/x-icon');
-                document.head.appendChild(link);
-            }
+            // Update the favicon
+            const link: any = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            link.href = this.canvas.toDataURL('image/x-icon');
+            document.head.appendChild(link);
+            // }
 
         }
     }
@@ -107,19 +100,14 @@ export class CommonService {
     // Call this function when a user reads the notifications
     markNotificationsAsRead() {
         this.unreadNotificationCount = 0;
-        // Update the title without the unread count
         document.title = 'Conversa Connect';
     }
 
     requestPermission(data?: any) {
-        console.log(data)
         const messaging = getMessaging();
-        console.log(messaging)
         getToken(messaging, { vapidKey: environment.firebase.vapidKey })
             .then((currentToken) => {
                 if (currentToken) {
-                    console.log(currentToken);
-
                     this.sendFcmNotification(currentToken, data)
                 } else {
                     console.log('No registration token available. Request permission to generate one.');
@@ -160,6 +148,5 @@ export class CommonService {
                 }
             );
     }
-
 
 }

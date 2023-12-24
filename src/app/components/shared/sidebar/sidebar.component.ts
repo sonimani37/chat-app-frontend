@@ -30,8 +30,6 @@ export class SidebarComponent {
 
     constructor(private auth: AuthService, private router: Router, private commonService: CommonService, private dialog: MatDialog) {
         this.socket = io(serverUrl);
-
-        // In your Angular component
         this.socket.on('userStatusChange', (data: any) => {
             this.getAllUsers();
         });
@@ -74,6 +72,8 @@ export class SidebarComponent {
         this.auth.userImage.subscribe((user: any) => {
             let data: any = localStorage.getItem('user_data');
             this.loginUser = JSON.parse(data);
+            this.getAllUsers();
+            this.getAllGroups();
         })
     }
 
@@ -103,15 +103,9 @@ export class SidebarComponent {
         this.auth.sendRequest('get', endPoint, null)
             .subscribe((result: any) => {
                 if (result.success == false) {
-
                 } else if (result.success == true) {
                     this.allGroups = [];
                     this.allGroups = result.groups
-                    // result.group.user.forEach((element:any) => {
-                    //     if(element.id == this.userId){
-
-                    //     }
-                    // });
                     this.selectedGroup(this.allGroups[0]);
                 }
             });
@@ -130,7 +124,6 @@ export class SidebarComponent {
     }
 
     getImageUrl(message: string, type: string): string {
-        // Assuming your images are stored in the 'uploads' folder
         if (type == 'social_image') {
             return `${message.replace('\\', '/')}`;
         } else {
@@ -149,7 +142,6 @@ export class SidebarComponent {
     readFile(): void {
         const reader = new FileReader();
         reader.onload = (e) => {
-            // Set the 'imageUrl' property with the data URL of the uploaded image
             this.imageUrl = e.target?.result as string;
         };
         reader.readAsDataURL(this.selectedFile as Blob);

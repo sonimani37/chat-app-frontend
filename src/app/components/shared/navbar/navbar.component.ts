@@ -23,12 +23,6 @@ export class NavbarComponent {
     ngOnInit(): void {
         let data: any = localStorage.getItem('user_data');
         this.loginUserData = JSON.parse(data);
-        // // In your Angular component
-        //   this.socket.on('userStatusChange', (data) => {
-        //     // Update user status in the UI based on the received data
-        //     console.log('User status change:', data);
-        // });
-
         this.auth.userImage.subscribe((user: any) => {
             let data: any = localStorage.getItem('user_data');
             this.loginUserData = JSON.parse(data);
@@ -41,7 +35,6 @@ export class NavbarComponent {
     }
 
     getImageUrl(message: string): string {
-        // Assuming your images are stored in the 'uploads' folder
         return this.imagePath + `/${message?.replace('\\', '/')}`;
     }
 

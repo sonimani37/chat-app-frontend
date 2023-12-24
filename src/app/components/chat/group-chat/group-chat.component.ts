@@ -40,13 +40,12 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         this.socket = io(serverUrl);
         this.senderId = localStorage.getItem('userId');
         this.loginUser = localStorage.getItem('user_data');
-        this.loginUser =  JSON.parse( this.loginUser);
+        this.loginUser = JSON.parse(this.loginUser);
 
         this.commonService.groupDataEmitter.subscribe((data) => {
             this.receiverId = data?.id;
             this.getGroup(this.receiverId)
             this.getGroupMessages();
-            // Handle the received data as needed
         });
 
     }
@@ -61,40 +60,10 @@ export class GroupChatComponent implements OnInit, OnDestroy {
 
         this.getAllGroups()
         if (this.chatType == 'group') {
-            // this.getGroupMessages();
             this.socket.on('chatGroupMessage', (data) => {
                 this.getGroupMessages();
             });
-            //  console.log(this.receiverId);
-            //   this.getGroup(this.receiverId);
         }
-
-        // this.route.queryParams.subscribe(params => {
-        //     this.chatType = params['type'];
-        // });
-
-        // this.route.paramMap.subscribe(params => {
-        //     // Get the userId from the route
-        //     this.receiverId = params.get('userId');
-        // });
-
-        // if (this.chatType == 'single') {
-        //     // this.getMessages();
-        //     // Example: Listen for chatMessage events from the server
-        //     this.socket.on('chatMessage', (message: any) => {
-        //         this.getMessages();
-        //     });
-        //     console.log(this.receiverId);
-        //     this.getUser(this.receiverId);
-
-        // } else if (this.chatType == 'group')  {
-        //     this.getGroupMessages();
-        //     this.socket.on('chatGroupMessage', (data) => {
-        //         this.getGroupMessages();
-        //     });
-        //     this.getGroup(this.receiverId);
-        // }
-        // console.log(this.receiverId)
     }
 
     getGroup(userId: any) {
@@ -107,17 +76,17 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                     this.selectedGroup = result.group;
                     this.receiverId = result.group.id;
                     console.log(this.selectedGroup);
-                    
+
                 }
             });
     }
 
-    onFileSelected(event: any,groupId:any): void {
+    onFileSelected(event: any, groupId: any): void {
         this.selectedFile = event.target.files[0] as File;
         this.onSubmit(groupId);
     }
 
-    onSubmit(groupId:any): void {
+    onSubmit(groupId: any): void {
         if (!this.selectedFile) {
             console.error('No file selected');
             return;
@@ -131,6 +100,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                 if (result.success == false) {
                 } else if (result.success == true) {
                     this.ngOnInit();
+                    this.auth.userImage.next(result.user);
                 }
             })
     }
@@ -143,7 +113,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         this.auth.sendRequest('post', endPoint, dataObj).subscribe(
             (result: any) => {
                 if (result.success == false) {
-
                 } else if (result.success == true) {
                     this.previousGroupMsgs = [];
                     this.previousGroupMsgs = result.messages;
@@ -156,7 +125,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                             element.isSender = false;
                         }
                     });
-                    console.log(this.previousGroupMsgs);
                 }
             })
 
@@ -184,7 +152,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
 
                     } else if (result.success == true) {
                         if (this.chatType == 'group') {
-                            // Emit the message to the group
                             this.socket.emit('group-message', chatData);
                             this.getGroupMessages();
                         }
@@ -197,8 +164,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     }
 
     uploadFile(event: any) {
-        // this.chatForm.controls['message'].clearValidators();
-        // this.chatForm.controls['message'].updateValueAndValidity();
         const file: File = event.target['files'][0];
         this.selectedFile = file;
         if (this.selectedFile) {
@@ -209,7 +174,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     readFile(): void {
         const reader = new FileReader();
         reader.onload = (e) => {
-            // Set the 'imageUrl' property with the data URL of the uploaded image
             this.imageUrl = e.target?.result as string;
         };
         reader.readAsDataURL(this.selectedFile as Blob);
@@ -224,11 +188,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                 } else if (result.success == true) {
                     this.allGroups = [];
                     this.allGroups = result.groups
-                    // result.group.user.forEach((element:any) => {
-                    //     if(element.id == this.userId){
-
-                    //     }
-                    // });
                     this.selectedGroups(this.allGroups[0]);
                 }
             });
@@ -246,12 +205,10 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     }
 
     getImageUrl(message: string): string {
-        // Assuming your images are stored in the 'uploads' folder
         return this.imagePath + `/${message?.replace('\\', '/')}`;
     }
 
     ngOnDestroy(): void {
-        // Disconnect the socket when the component is destroyed
         this.socket.disconnect();
     }
 

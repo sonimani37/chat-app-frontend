@@ -1,4 +1,4 @@
-<div class="card p-4">
+<div class="card group-card ">
     <h4 class="card-header">Create Group</h4>
     <div class="card-body">
         <form [formGroup]="groupForm" (ngSubmit)="createGroup()">
@@ -14,7 +14,7 @@
                 <label for="Participants">Participants</label>
                 <mat-select class="form-control" formControlName="participants" placeholder="Select Participant"
                     multiple>
-                    <mat-option *ngFor="let user of allUsers" [value]="user.id">{{user.firstName}}</mat-option>
+                    <mat-option *ngFor="let user of allUsers" [value]="user.id">{{user.firstname + " " + user.lastname}}</mat-option>
                 </mat-select>
             </div>
             <button class="btn button mt-3"> Add Group </button>

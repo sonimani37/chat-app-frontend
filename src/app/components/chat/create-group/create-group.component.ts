@@ -43,13 +43,10 @@ export class CreateGroupComponent implements OnInit {
         this.auth.sendRequest('post', endPoint, this.groupForm.value)
             .subscribe((result: any) => {
                 if (result.success == false) {
-                    console.log('in');
-                    
-                    this.dialogRef.close(true);
-                    this.groupForm.reset();
-
                 } else if (result.success == true) {
-                    console.log(result);
+                    this.dialogRef.close(true);
+                    this.auth.userImage.next(true);
+                    this.groupForm.reset();
                 }
             })
     }
