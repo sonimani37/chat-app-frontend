@@ -89,6 +89,7 @@ export class SidebarComponent {
                     result.user.forEach((element: any, index: any) => {
                         if (element.id != this.userId) {
                             this.allUsers.push(element)
+
                         }
                     });
                     this.selectedUser(this.allUsers[0]);

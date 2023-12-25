@@ -30,6 +30,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     message: string = '';
     imageUrl: any;
     selectedFile: any;
+    selectGroupImg:any
     imagePath: any = imagePath;
     allGroups: any[] = [];
     loginUser: any;
@@ -74,25 +75,25 @@ export class GroupChatComponent implements OnInit, OnDestroy {
 
                 } else if (result.success == true) {
                     this.selectedGroup = result.group;
-                    this.receiverId = result.group.id;
                     console.log(this.selectedGroup);
-
+                    
+                    this.receiverId = result.group.id;
                 }
             });
     }
 
     onFileSelected(event: any, groupId: any): void {
-        this.selectedFile = event.target.files[0] as File;
+        this.selectGroupImg = event.target.files[0] as File;
         this.onSubmit(groupId);
     }
 
     onSubmit(groupId: any): void {
-        if (!this.selectedFile) {
+        if (!this.selectGroupImg) {
             console.error('No file selected');
             return;
         }
         const formData: FormData = new FormData();
-        formData.append('image', this.selectedFile, this.selectedFile.name);
+        formData.append('image', this.selectGroupImg, this.selectGroupImg.name);
 
         var endPoint = '/group/update/' + groupId
         this.auth.sendRequest('post', endPoint, formData)
@@ -127,7 +128,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                     });
                 }
             })
-
     }
 
     sendMessage() {
@@ -136,7 +136,10 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         var formData: any = new FormData();
         this.chatForm.controls['receiverId'].setValue(this.receiverId);
         this.chatForm.controls['senderId'].setValue(this.senderId);
-        if (this.chatForm.valid) {
+
+        console.log(this.chatForm);
+        
+        // if (this.chatForm.valid) {
             if (this.chatType == 'group') {
                 endPoint = 'group/send-message'
                 formData.append("message", this.chatForm.value.message);
@@ -152,15 +155,17 @@ export class GroupChatComponent implements OnInit, OnDestroy {
 
                     } else if (result.success == true) {
                         if (this.chatType == 'group') {
+                            this.commonService.sendFcmNotification(this.selectedGroup.user,this.chatForm.value,this.loginUser); 
                             this.socket.emit('group-message', chatData);
                             this.getGroupMessages();
                         }
                         this.chatForm.reset();
                         this.message = '';
+                        this.imageUrl='';
 
                     }
                 })
-        }
+        // }
     }
 
     uploadFile(event: any) {

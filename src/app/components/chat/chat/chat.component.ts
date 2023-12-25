@@ -39,6 +39,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     allUsers: any[] = [];
     messagesss: any;
 
+    callerId: any;
+    receiver_Id: any;
+    incomingCall: any;  // Information about incoming call
+    callAccepted: boolean = false;
+
+
     constructor(private route: ActivatedRoute, private auth: AuthService,
         private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
@@ -99,6 +105,26 @@ export class ChatComponent implements OnInit, OnDestroy {
         //     this.getGroup(this.receiverId);
         // }
         // console.log(this.receiverId)
+
+        // Get callerId and receiverId from route parameters
+        this.callerId = this.route.snapshot.paramMap.get('callerId');
+        this.receiver_Id = this.route.snapshot.paramMap.get('receiverId');
+
+        // Subscribe to incoming calls
+        this.commonService.onIncomingCall().subscribe((data) => {
+            this.incomingCall = data;
+            console.log(data);
+        });
+
+        // Subscribe to call accepted events
+        this.commonService.onCallAccepted().subscribe((data) => {
+            this.callAccepted = true;
+        });
+
+        // Subscribe to call ended events
+        this.commonService.onCallEnded().subscribe((data) => {
+            // Handle call ended logic
+        });
     }
 
     getUser(userId: any) {
@@ -109,7 +135,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
                 } else if (result.success == true) {
                     this.selectedUser = result.user;
-
                     this.receiverId = this.selectedUser.id;
                 }
             });
@@ -185,9 +210,9 @@ export class ChatComponent implements OnInit, OnDestroy {
                         this.imageUrl = '';
                         this.selectedFile = '';
                         if (this.chatType == 'single') {
+                            this.commonService.sendFcmNotification([this.selectedUser], this.chatForm.value, this.loginUser);
                             this.socket.emit('user-message', chatData, (error: any) => { })
                             this.getMessages();
-                            this.commonService.requestPermission({ data: this.chatForm.value, senderId: this.senderId, receiverId: this.receiverId });
                         }
                         this.chatForm.reset();
                         this.message = '';
@@ -238,6 +263,36 @@ export class ChatComponent implements OnInit, OnDestroy {
     selectedUsers(userData: any) {
         this.commonService.sendUserData(userData)
     }
+
+    deleteMessage(items: any) {
+        console.log(items);
+        const confirmDelete = window.confirm('Are you sure you want to delete this message?');
+        if (confirmDelete) {
+
+        }
+    }
+
+    deleteAllMessage(items: any) {
+
+    }
+
+
+    initiateCall(): void {
+        this.callerId = this.senderId;
+        console.log(this.callerId);
+        this.commonService.initiateCall(this.callerId, this.receiverId);
+    }
+
+    acceptCall(): void {
+        this.callerId = this.senderId;
+        this.commonService.acceptCall(this.callerId, this.receiverId);
+    }
+
+    endCall(): void {
+        this.callerId = this.senderId;
+        this.commonService.endCall(this.callerId, this.receiverId);
+    }
+
 
 
     ngOnDestroy(): void {

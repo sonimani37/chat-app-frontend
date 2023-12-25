@@ -4,7 +4,8 @@
         <div class="inside">
             <div class="nav nav-tab menu">
                 <button class="btn">
-                    <img class="avatar-xl" [src]="getImageUrl(loginUserData?.UserImages?.filePath)" alt="avatar">
+                    <img *ngIf="loginUserData?.UserImages" class="avatar-xl" [src]="getImageUrl(loginUserData?.UserImages?.filePath)" alt="avatar">
+                    <img *ngIf="!loginUserData?.UserImages" class="avatar-xl" src="../../../../assets/img/defaultProfile.jpeg" alt="avatar">
                     <form (ngSubmit)="onSubmit()" #imageForm="ngForm">
                         <input class="upload-profile" type="file" (change)="onFileSelected($event)" accept="image/*" />
                     </form>

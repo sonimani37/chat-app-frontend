@@ -135,8 +135,13 @@
                                     </div> -->
                             <div *ngFor="let item of previousGroupMsgs">
                                 <div class="message" *ngIf="item.isReceiver == true">
-                                    <img class="avatar-md" [src]="getImageUrl(item?.sender?.UserImages?.filePath)"
+
+                                    <img class="avatar-md" *ngIf="item?.sender.UserImages == null" src="../../../../assets/img/defaultProfile.jpeg"
                                         data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+
+                                    <img class="avatar-md" *ngIf="item?.sender.UserImages != null" [src]="getImageUrl(item?.sender?.UserImages?.filePath)"
+                                        data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+
                                     <div class="text-main">
                                         <div class="text-group">
                                             <div class="text" *ngIf="!isImage(item.message)">
@@ -160,8 +165,7 @@
                                                 <p>{{ item.message }}</p>
                                             </div>
                                             <ng-container *ngIf="isImage(item.message)">
-                                                <img [src]="getImageUrl(item.message)" alt="Image" width=200px;
-                                                    height=200px>
+                                                <img [src]="getImageUrl(item.message)" alt="Image" width=200px; height=200px>
                                             </ng-container>
                                         </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
@@ -246,7 +250,6 @@
                                 <button type="submit" class="btn send"><i class="material-icons">send</i></button>
                             </form>
                             <label>
-
                                 <input type="file" (change)="uploadFile($event)">
                                 <span class="btn attach d-sm-block d-none"><i
                                         class="material-icons">attach_file</i></span>

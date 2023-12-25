@@ -126,9 +126,9 @@ export class SignUpComponent implements OnInit {
                     if (result.success == false) {
                     } else if (result.success == true) {
                         this.responseMessage = result.successmessage;
-                        this.signupForm.reset();
                         setTimeout(() => {
                             this.responseMessage = '';
+                            this.signupForm.reset();
                             this.router.navigate(['sign-in']);
                         }, 3000);
                     }
