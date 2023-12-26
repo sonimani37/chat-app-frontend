@@ -7,6 +7,8 @@ import { io, Socket } from "socket.io-client";
 import { serverUrl } from '@env/environment';
 import { Observable } from 'rxjs';
 
+import { SimplePeer } from 'simple-peer';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -21,6 +23,7 @@ export class CommonService {
     fcmUrl = 'https://fcm.googleapis.com/fcm/send';
     unreadNotificationCount = 0;
     socket: Socket;
+    peer: SimplePeer | undefined;
 
 
     constructor(public http: HttpClient, public route: ActivatedRoute) {
@@ -131,22 +134,53 @@ export class CommonService {
     }
 
     initiateCall(callerId: number, receiverId: number): void {
-        console.log(callerId, receiverId);
-
+        console.log('-------initiateCall--2----------' + callerId, receiverId);
         this.socket.emit('call', { callerId, receiverId });
     }
 
     acceptCall(callerId: number, receiverId: number): void {
+        console.log('-------acceptCall--2----------' + callerId, receiverId);
         this.socket.emit('acceptCall', { callerId, receiverId });
     }
 
     endCall(callerId: number, receiverId: number): void {
+        console.log('-------endCall--2----------' + callerId);
         this.socket.emit('endCall', { callerId, receiverId });
     }
 
     onIncomingCall(): Observable<any> {
         return new Observable((observer) => {
+            console.log();
+
             this.socket.on('incomingCall', (data) => observer.next(data));
+        });
+    }
+
+
+    onOffer(): Observable<any> {
+        // Listen for 'offer' events from the server
+        return new Observable<any>(observer => {
+            this.socket.on('offer', (offer) => {
+                observer.next(offer);
+            });
+        });
+    }
+
+    onAnswer(): Observable<any> {
+        // Listen for 'answer' events from the server
+        return new Observable<any>(observer => {
+            this.socket.on('answer', (answer) => {
+                observer.next(answer);
+            });
+        });
+    }
+
+    onIncomingAudio(): Observable<MediaStream> {
+        // Listen for 'incomingAudio' events from the server
+        return new Observable<MediaStream>(observer => {
+            this.socket.on('incomingAudio', (stream) => {
+                observer.next(stream);
+            });
         });
     }
 

@@ -25,22 +25,25 @@
                                     </h5>
                                     <span>Active now</span>
                                 </div>
-                                <button class="btn connect d-md-block d-none" name="1"><i
-                                        class="material-icons md-30">phone_in_talk</i></button>
+                                <!-- <button class="btn connect d-md-block d-none" name="1" (click)="callUser()">
+                                    <i class="material-icons md-30">phone_in_talk</i>
+                                </button> -->
 
                                 <!-- call.component.html -->
                                 <div *ngIf="!callAccepted">
-                                    <button (click)="initiateCall()">Initiate Call</button>
+                                    <button class="btn btn-danger" (click)="initiateCall()">
+                                        <i class="material-icons md-30">phone_in_talk</i>
+                                    </button>
                                 </div>
 
                                 <div *ngIf="incomingCall">
                                     <p>Incoming call from {{ incomingCall.callerId }}</p>
-                                    <button (click)="acceptCall()">Accept</button>
+                                    <button class="btn btn-danger" (click)="acceptCall()">Accept</button>
                                 </div>
 
                                 <div *ngIf="callAccepted">
                                     <p>Call in progress...</p>
-                                    <button (click)="endCall()">End Call</button>
+                                    <button class="btn btn-danger" (click)="endCall()">End Call</button>
                                 </div>
 
                             </div>
@@ -70,23 +73,28 @@
                                                 <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
                                                     height=200px>
                                             </ng-container>
+                                            <button mat-button [matMenuTriggerFor]="menu"><i class="material-icons md-30">more_vert</i></button>
+                                            <mat-menu #menu="matMenu">
+                                                <button mat-menu-item (click)="deleteMessage(item.id)">Delete</button>
+                                            </mat-menu>
 
-                                            <div class="dropdown">
-                                                <button class="btn" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false"><i
-                                                        class="material-icons md-30">more_vert</i></button>
+                                            <!-- <div class="dropdown">
+                                                <button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                    <i class="material-icons md-30">more_vert</i>
+                                                </button>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <button class="dropdown-item"><i class="fa fa-ellipsis-v"></i>
-                                                        Delete</button>
+                                                    <button class="dropdown-item" (click)="deleteMessage(item.id)">
+                                                        <i class="fa fa-ellipsis-v"></i>
+                                                        Delete
+                                                    </button>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="sender-avatar">
                                             {{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
                                         </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
                                     </div>
-                                    <!-- Add delete option with hamburger icon -->
                                 </div>
 
                                 <!-- Sender message -->
@@ -101,15 +109,22 @@
                                                 <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
                                                     height=200px>
                                             </ng-container>
-                                            <div class="dropdown">
+                                            <button mat-button [matMenuTriggerFor]="menu"><i class="material-icons md-30">more_vert</i></button>
+                                            <mat-menu #menu="matMenu">
+                                                <button mat-menu-item (click)="deleteMessage(item.id)">Delete</button>
+                                            </mat-menu>
+                                            <!-- <div class="dropdown">
                                                 <button class="btn" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false"><i
-                                                        class="material-icons md-30">more_vert</i></button>
+                                                    aria-expanded="true">
+                                                    <i class="material-icons md-30">more_vert</i>
+                                                </button>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <button class="dropdown-item"><i class="fa fa-ellipsis-v"></i>
-                                                        Delete</button>
+                                                    <button class="dropdown-item" (click)="deleteMessage(item.id)">
+                                                        <i class="fa fa-ellipsis-v"></i>
+                                                        Delete
+                                                    </button>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="sender-avatar">
                                             {{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}

@@ -8,6 +8,7 @@ import { serverUrl } from 'src/environments/environment';
 import { imagePath } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { FirebaseService } from '@core/services/firebase.service';
 
 
 @Component({
@@ -45,7 +46,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     callAccepted: boolean = false;
 
 
-    constructor(private route: ActivatedRoute, private auth: AuthService,
+    constructor(private route: ActivatedRoute, private auth: AuthService,private fireService: FirebaseService,
         private commonService: CommonService, private dialog: MatDialog,
         private formBuilder: UntypedFormBuilder) {
 
@@ -77,43 +78,35 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.getMessages();
         });
 
+        this.socket.on('callError', (message: any) => {
+            console.log('------callError---5----------' + message.message)
+        });
+
+        this.socket.on('incomingCall', (message: any) => {
+            console.log('-------incomingCall--5----------')
+            console.log(message)
+        });
+
+        this.socket.on('callAccepted', (message: any) => {
+            console.log('-------callAccepted--4----------')
+            console.log(message)
+        });
+
+        this.socket.on('callEnded', (message: any) => {
+            console.log('-------callEnded--4----------')
+            console.log(message)
+        });
+
+
         this.getAllUsers();
 
-        // this.route.queryParams.subscribe(params => {
-        //     this.chatType = params['type'];
-        // });
-
-        // this.route.paramMap.subscribe(params => {
-        //     // Get the userId from the route
-        //     this.receiverId = params.get('userId');
-        // });
-
-        // if (this.chatType == 'single') {
-        //     // this.getMessages();
-        //     // Example: Listen for chatMessage events from the server
-        //     this.socket.on('chatMessage', (message: any) => {
-        //         this.getMessages();
-        //     });
-        //     console.log(this.receiverId);
-        //     this.getUser(this.receiverId);
-
-        // } else if (this.chatType == 'group')  {
-        //     this.getGroupMessages();
-        //     this.socket.on('chatGroupMessage', (data) => {
-        //         this.getGroupMessages();
-        //     });
-        //     this.getGroup(this.receiverId);
-        // }
-        // console.log(this.receiverId)
-
-        // Get callerId and receiverId from route parameters
-        this.callerId = this.route.snapshot.paramMap.get('callerId');
-        this.receiver_Id = this.route.snapshot.paramMap.get('receiverId');
+        // // Get callerId and receiverId from route parameters
+        // this.callerId = this.route.snapshot.paramMap.get('callerId');
+        // this.receiver_Id = this.route.snapshot.paramMap.get('receiverId');
 
         // Subscribe to incoming calls
         this.commonService.onIncomingCall().subscribe((data) => {
-            this.incomingCall = data;
-            console.log(data);
+            this.incomingCall = true;
         });
 
         // Subscribe to call accepted events
@@ -123,8 +116,11 @@ export class ChatComponent implements OnInit, OnDestroy {
 
         // Subscribe to call ended events
         this.commonService.onCallEnded().subscribe((data) => {
+            this.incomingCall = false
             // Handle call ended logic
         });
+
+        this.callerId = this.senderId;
     }
 
     getUser(userId: any) {
@@ -186,6 +182,7 @@ export class ChatComponent implements OnInit, OnDestroy {
             return this.imagePath + `/${message?.replace('\\', '/')}`;
         }
     }
+
     sendMessage() {
         var chatData: any;
         var endPoint: any
@@ -264,34 +261,106 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.commonService.sendUserData(userData)
     }
 
-    deleteMessage(items: any) {
-        console.log(items);
+    deleteMessage(id: any) {
         const confirmDelete = window.confirm('Are you sure you want to delete this message?');
         if (confirmDelete) {
-
+            var endPoint = 'chat/delete-message/' + id
+            this.auth.sendRequest('delete', endPoint, null).subscribe(
+                (result: any) => {
+                    result = result;
+                    if (result.success == false) {
+                        console.log(result);
+                    } else if (result.success == true) {
+                        this.getMessages();
+                    }
+                })
         }
     }
 
-    deleteAllMessage(items: any) {
-
-    }
 
 
     initiateCall(): void {
         this.callerId = this.senderId;
-        console.log(this.callerId);
+        console.log('------initiateCall---1----------' + this.callerId);
         this.commonService.initiateCall(this.callerId, this.receiverId);
+
+        // Subscribe to WebRTC events
+        this.commonService.onOffer().subscribe((offer) => {
+            // Handle offer and send answer
+            this.handleOffer(offer);
+        });
+
+        this.commonService.onAnswer().subscribe((answer) => {
+            // Handle answer
+            this.handleAnswer(answer);
+        });
+
+        this.commonService.onIncomingAudio().subscribe((stream) => {
+            // Handle incoming audio stream
+            this.handleIncomingAudio(stream);
+        });
+    }
+
+    handleOffer(offer: any): void {
+        console.log(offer);
+
+        // // Handle the offer and create a peer connection
+        // this.peer = new SimplePeer({ initiator: false, trickle: false });
+
+        // this.peer.on('signal', (data) => {
+        //     // Send the answer back to the caller
+        //     this.socket.emit('answer', data);
+        // });
+
+        // // Handle incoming audio stream
+        // this.peer.on('stream', (stream) => {
+        //     this.onIncomingAudio().subscribe((incomingStream) => {
+        //         // Handle incoming audio stream
+        //         // Example: this.audioElement.srcObject = incomingStream;
+        //     });
+        // });
+
+        // // Configure the peer connection with the received offer
+        // this.peer.signal(offer);
+    }
+
+    handleAnswer(answer: any): void {
+        console.log(answer);
+        // Handle the answer using the WebRTC service
+        // You may need to set up a peer connection here
+        // Example: this.webrtcService.handleAnswer(answer);
+    }
+
+    handleIncomingAudio(stream: MediaStream): void {
+        console.log(stream);
+        // Handle incoming audio stream
+        // You can use the stream to play audio on the caller's side
+        // Example: this.audioElement.srcObject = stream;
     }
 
     acceptCall(): void {
+        this.incomingCall = false;
         this.callerId = this.senderId;
+        console.log('-------acceptCall--1----------' + this.callerId);
         this.commonService.acceptCall(this.callerId, this.receiverId);
     }
 
     endCall(): void {
+        this.callAccepted = false
         this.callerId = this.senderId;
+
+        console.log('-------endCall--1----------' + this.callerId);
         this.commonService.endCall(this.callerId, this.receiverId);
     }
+
+    callUser() {
+        const data = {
+          from: this.senderId ,
+          to: this.receiverId,
+          signalData: 'some_signal_data' // You need to implement signaling mechanism
+        };
+        this.fireService.callUser(data);
+      }
 
 
 
