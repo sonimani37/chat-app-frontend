@@ -22,9 +22,12 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ImagePreviewComponent } from './image-preview/image-preview.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    ImagePreviewComponent
+  ],
   exports: [
     CommonModule,
     MatTabsModule,

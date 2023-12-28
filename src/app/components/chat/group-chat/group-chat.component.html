@@ -81,7 +81,7 @@
                         <div class="col-md-12">
                             <div class="inside">
                                 <a href="#">
-                                    <img class="avatar-md" [src]="getImageUrl(selectedGroup?.filePath)"
+                                    <img class="avatar-md" [src]="getImageUrl(selectedGroup?.filePath,'type')"
                                         data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
                                     <form #imageForm="ngForm">
                                         <input class="upload-profile-setting" type="file"
@@ -136,21 +136,53 @@
                             <div *ngFor="let item of previousGroupMsgs">
                                 <div class="message" *ngIf="item.isReceiver == true">
 
-                                    <img class="avatar-md" *ngIf="item?.sender.UserImages == null" src="../../../../assets/img/defaultProfile.jpeg"
-                                        data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                    <img class="avatar-md" *ngIf="item?.sender.UserImages == null"
+                                        src="../../../../assets/img/defaultProfile.jpeg" data-toggle="tooltip"
+                                        data-placement="top" title="Keith" alt="avatar">
 
-                                    <img class="avatar-md" *ngIf="item?.sender.UserImages != null" [src]="getImageUrl(item?.sender?.UserImages?.filePath)"
-                                        data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+                                    <img class="avatar-md" *ngIf="item?.sender.UserImages != null"
+                                        [src]="getImageUrl(item?.sender?.UserImages?.filePath,'type')" data-toggle="tooltip"
+                                        data-placement="top" title="Keith" alt="avatar">
 
                                     <div class="text-main">
                                         <div class="text-group">
-                                            <div class="text" *ngIf="!isImage(item.message)">
+                                            <div class="text me" *ngIf="!(item.message).includes('uploads/')">
                                                 <p>{{ item.message }}</p>
                                             </div>
-                                            <ng-container *ngIf="isImage(item.message)">
-                                                <img [src]="getImageUrl(item.message)" alt="Image" width=200px;
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/images/'])">
+                                                <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
                                                     height=200px>
                                             </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/audios/'])">
+                                                <audio controls>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </audio>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/docs/'])">
+                                                <a [href]="imagePath + '/' + item.message" target="_blank">
+                                                    <img src="../../../../assets/doc-icons/adobe.svg" alt="Image"
+                                                        width=100px; height=100px>
+                                                    <span>
+                                                        {{ item.message.split('/')[2] }}
+                                                    </span>
+                                                </a>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/videos/'])">
+                                                <video controls width=200px; height=200px>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </video>
+                                            </ng-container>
+
+                                            <button mat-button [matMenuTriggerFor]="menu"><i
+                                                    class="material-icons md-30">more_vert</i></button>
+                                            <mat-menu #menu="matMenu">
+                                                <button mat-menu-item (click)="deleteMessage(item.id)">Delete</button>
+                                            </mat-menu>
+
                                         </div>
                                         <div class="sender-avatar">
                                             {{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
@@ -161,12 +193,44 @@
                                 <div class="message me" *ngIf="item.isSender == true">
                                     <div class="text-main">
                                         <div class="text-group me">
-                                            <div class="text me" *ngIf="!isImage(item.message)">
+
+                                            <div class="text me" *ngIf="!(item.message).includes('uploads/')">
                                                 <p>{{ item.message }}</p>
                                             </div>
-                                            <ng-container *ngIf="isImage(item.message)">
-                                                <img [src]="getImageUrl(item.message)" alt="Image" width=200px; height=200px>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/images/'])">
+                                                <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
+                                                    height=200px>
                                             </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/audios/'])">
+                                                <audio controls>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </audio>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/docs/'])">
+                                                <a [href]="imagePath + '/' + item.message">
+                                                    <img src="../../../../assets/doc-icons/adobe.svg" alt="Image"
+                                                        width=100px; height=100px>
+                                                    <span>
+                                                        {{ item.message.split('/')[2] }}
+                                                    </span>
+                                                </a>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/videos/'])">
+                                                <video controls width=200px; height=200px>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </video>
+                                            </ng-container>
+
+                                            <button mat-button [matMenuTriggerFor]="menu"><i
+                                                    class="material-icons md-30">more_vert</i></button>
+                                            <mat-menu #menu="matMenu">
+                                                <button mat-menu-item (click)="deleteMessage(item.id)">Delete</button>
+                                            </mat-menu>
+
                                         </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
                                     </div>
@@ -177,66 +241,6 @@
                                 <img [src]="imageUrl" alt="Uploaded Image" width="100px" height="100px">
                             </div>
 
-                            <!-- <div class="date">
-                                        <hr>
-                                        <span>Today</span>
-                                        <hr>
-                                    </div>
-                                    <div class="message me">
-                                        <div class="text-main">
-                                            <div class="text-group me">
-                                                <div class="text me">
-                                                    <p>Well done all. See you all at 2 for the kick-off meeting.</p>
-                                                </div>
-                                            </div>
-                                            <span>10:21 PM</span>
-                                        </div>
-                                    </div>
-                                    <div class="message">
-                                        <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-5.jpg"
-                                            data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-                                        <div class="text-main">
-                                            <div class="text-group">
-                                                <div class="text">
-                                                    <div class="attachment">
-                                                        <button class="btn attach"><i
-                                                                class="material-icons md-18">insert_drive_file</i></button>
-                                                        <div class="file">
-                                                            <h5><a href="#">Tenacy Agreement.pdf</a></h5>
-                                                            <span>24kb Document</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <span>11:07 PM</span>
-                                        </div>
-                                    </div>
-                                    <div class="message me">
-                                        <div class="text-main">
-                                            <div class="text-group me">
-                                                <div class="text me">
-                                                    <p>Hope you're all ready to tackle this great project. Let's
-                                                        smash some Brand Concept & Design!</p>
-                                                </div>
-                                            </div>
-                                            <span><i class="material-icons">check</i>10:21 PM</span>
-                                        </div>
-                                    </div>
-                                    <div class="message">
-                                        <img class="avatar-md" src="../../../assets/img/avatars/avatar-female-5.jpg"
-                                            data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
-                                        <div class="text-main">
-                                            <div class="text-group">
-                                                <div class="text typing">
-                                                    <div class="wave">
-                                                        <span class="dot"></span>
-                                                        <span class="dot"></span>
-                                                        <span class="dot"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> -->
                         </div>
                     </div>
                 </div>
@@ -249,6 +253,14 @@
                                 <!-- <button class="btn emoticons"><i class="material-icons">insert_emoticon</i></button> -->
                                 <button type="submit" class="btn send"><i class="material-icons">send</i></button>
                             </form>
+                            <button title="Click here to start recording action" class="btn-mic w-auto"
+                                *ngIf="!isRecording" (click)="startRecording()" style="margin-right: 3px;">
+                                <img src="../../../../assets/img/google_mic_icon.png" />
+                            </button>
+                            <button title="Click here to stop recording" class="btn-stop w-auto" *ngIf="isRecording"
+                                (click)="stopRecording()" style="margin-right: 3px;">
+                                <img src="../../../../assets/img/music_pause_sound_icon.png" />
+                            </button>
                             <label>
                                 <input type="file" (change)="uploadFile($event)">
                                 <span class="btn attach d-sm-block d-none"><i

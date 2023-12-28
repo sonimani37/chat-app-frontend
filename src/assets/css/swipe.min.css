@@ -24,7 +24,7 @@ body {
     font-family: CircularStd, sans-serif;
     font-size: 15px;
     background: #fdfdfd;
-    color: #bdbac2
+    color: #222
 }
 
 a {
@@ -146,7 +146,7 @@ p {
     border-radius: 6px;
     border: none;
     font-size: 16px;
-    color: #bdbac2 !important
+    color: #222 !important
 }
 
 .form-control:focus {

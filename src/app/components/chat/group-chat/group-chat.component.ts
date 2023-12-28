@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -7,6 +7,9 @@ import { io, Socket } from "socket.io-client";
 import { serverUrl } from 'src/environments/environment';
 import { imagePath } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
+
+import { FirebaseService } from '@core/services/firebase.service';
+import { AudioRecordingService } from '@core/services/audio-recording.service';
 
 @Component({
     selector: 'app-group-chat',
@@ -35,8 +38,15 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     allGroups: any[] = [];
     loginUser: any;
 
+
+    isRecording = false;
+    audioURL: string | null = null;
+    @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
+    recordedData: Blob | undefined;
+
     constructor(private route: ActivatedRoute, private auth: AuthService, private commonService: CommonService, private dialog: MatDialog,
-        private formBuilder: UntypedFormBuilder) {
+        private AudioRecordingService: AudioRecordingService, private cd: ChangeDetectorRef,
+         private formBuilder: UntypedFormBuilder) {
 
         this.socket = io(serverUrl);
         this.senderId = localStorage.getItem('userId');
@@ -65,6 +75,19 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                 this.getGroupMessages();
             });
         }
+
+        this.AudioRecordingService.audioBlob$.subscribe(blob => {
+            this.recordedData = blob;
+            console.log(this.recordedData);
+
+            this.audioURL = window.URL.createObjectURL(blob);
+            console.log(this.audioURL);
+
+            // console.log(this.audioPlayer);
+            // this.audioPlayer.nativeElement.src = this.audioURL;
+
+            this.cd.detectChanges();
+        });
     }
 
     getGroup(userId: any) {
@@ -145,10 +168,32 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                 formData.append("message", this.chatForm.value.message);
                 formData.append("groupId", this.receiverId);
                 formData.append("senderId", this.chatForm.value.senderId);
+
                 if (this.selectedFile) {
-                    formData.append("files", this.selectedFile);
+
+                    if (this.selectedFile.type.includes("image/")) {
+                        formData.append("image", this.selectedFile);
+
+                    } else if (this.selectedFile.type.includes("application/")) {
+                        formData.append("doc", this.selectedFile);
+
+                    } else if (this.selectedFile.type.includes("audio/")) {
+                        formData.append("audio", this.selectedFile);
+
+                    } else if (this.selectedFile.type.includes("video/")) {
+                        formData.append("video", this.selectedFile);
+                    }
+                }
+
+                if (this.recordedData != undefined) {
+                    console.log(this.recordedData);
+                    formData.append("audio", this.recordedData);
                 }
             }
+            formData.forEach((value:any,key:any) => {
+                console.log(key +'----------------' + value);
+                
+            });
             this.auth.sendRequest('post', endPoint, formData).subscribe(
                 (result: any) => {
                     if (result.success == false) {
@@ -157,6 +202,8 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                         if (this.chatType == 'group') {
                             this.commonService.sendFcmNotification(this.selectedGroup.user,this.chatForm.value,this.loginUser); 
                             this.socket.emit('group-message', chatData);
+                             this.selectedFile = '';
+                             this.recordedData = undefined;
                             this.getGroupMessages();
                         }
                         this.chatForm.reset();
@@ -169,10 +216,22 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     }
 
     uploadFile(event: any) {
+        this.chatForm.controls['message'].clearValidators();
+        this.chatForm.controls['message'].updateValueAndValidity();
+
         const file: File = event.target['files'][0];
         this.selectedFile = file;
-        if (this.selectedFile) {
+
+          if (this.selectedFile.type.includes("image/")) {
             this.readFile();
+        } else if (this.selectedFile.type.includes("application/")) {
+            this.imageUrl = "../../../../assets/doc-icons/chat_doc_ic.png"
+
+        } else if (this.selectedFile.type.includes("audio/")) {
+            this.imageUrl = "../../../../assets/img/mp3_music_icon.png"
+
+        } else if (this.selectedFile.type.includes("video/")) {
+            this.imageUrl = "../../../../assets/doc-icons/video_ic_03.png"
         }
     }
 
@@ -183,6 +242,22 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         };
         reader.readAsDataURL(this.selectedFile as Blob);
     }
+
+    startRecording() {
+        this.chatForm.controls['message'].clearValidators();
+        this.chatForm.controls['message'].updateValueAndValidity();
+
+        this.isRecording = true;
+        let recorded = this.AudioRecordingService.startRecording();
+        console.log(recorded);
+
+    }
+
+    stopRecording() {
+        this.isRecording = false;
+        this.AudioRecordingService.stopRecording();
+    }
+
 
     getAllGroups() {
         var endPoint = 'group'
@@ -209,8 +284,28 @@ export class GroupChatComponent implements OnInit, OnDestroy {
         return imageExtensions.some(ext => lowerCaseMessage.endsWith(ext));
     }
 
-    getImageUrl(message: string): string {
-        return this.imagePath + `/${message?.replace('\\', '/')}`;
+    getImageUrl(message: string, type: string): string {
+        if (type == 'social_image') {
+            return `${message.replace('\\', '/')}`;
+        } else {
+            return this.imagePath + `/${message?.replace('\\', '/')}`;
+        }
+    }
+
+    deleteMessage(id: any) {
+        const confirmDelete = window.confirm('Are you sure you want to delete this message?');
+        if (confirmDelete) {
+            // var endPoint = 'chat/delete-message/' + id
+            // this.auth.sendRequest('delete', endPoint, null).subscribe(
+            //     (result: any) => {
+            //         result = result;
+            //         if (result.success == false) {
+            //             console.log(result);
+            //         } else if (result.success == true) {
+            //             this.getMessages();
+            //         }
+            //     })
+        }
     }
 
     ngOnDestroy(): void {

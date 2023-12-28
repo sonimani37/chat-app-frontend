@@ -66,32 +66,43 @@
 
                                     <div class="text-main">
                                         <div class="text-group">
-                                            <div class="text" *ngIf="!isImage(item.message)">
+
+                                            <div class="text me" *ngIf="!(item.message).includes('uploads/')">
                                                 <p>{{ item.message }}</p>
                                             </div>
-                                            <ng-container *ngIf="isImage(item.message)">
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/images/'])">
                                                 <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
                                                     height=200px>
                                             </ng-container>
-                                            <button mat-button [matMenuTriggerFor]="menu"><i class="material-icons md-30">more_vert</i></button>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/audios/'])">
+                                                <audio controls>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </audio>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/docs/'])">
+                                                <a [href]="imagePath + '/' + item.message" target="_blank">
+                                                    <img src="../../../../assets/doc-icons/adobe.svg" alt="Image"
+                                                        width=100px; height=100px>
+                                                    <span>
+                                                        {{ item.message.split('/')[2] }}
+                                                    </span>
+                                                </a>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/videos/'])">
+                                                <video controls width=200px; height=200px>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </video>
+                                            </ng-container>
+
+                                            <button mat-button [matMenuTriggerFor]="menu"><i
+                                                    class="material-icons md-30">more_vert</i></button>
                                             <mat-menu #menu="matMenu">
                                                 <button mat-menu-item (click)="deleteMessage(item.id)">Delete</button>
                                             </mat-menu>
-
-                                            <!-- <div class="dropdown">
-                                                <button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                    <i class="material-icons md-30">more_vert</i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <button class="dropdown-item" (click)="deleteMessage(item.id)">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div> -->
-                                        </div>
-                                        <div class="sender-avatar">
-                                            {{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
                                         </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
                                     </div>
@@ -99,35 +110,45 @@
 
                                 <!-- Sender message -->
                                 <div class="message me" *ngIf="item.isSender == true">
-
                                     <div class="text-main">
                                         <div class="text-group me">
-                                            <div class="text me" *ngIf="!isImage(item.message)">
+
+                                            <div class="text me" *ngIf="!(item.message).includes('uploads/')">
                                                 <p>{{ item.message }}</p>
                                             </div>
-                                            <ng-container *ngIf="isImage(item.message)">
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/images/'])">
                                                 <img [src]="getImageUrl(item.message,'type')" alt="Image" width=200px;
                                                     height=200px>
                                             </ng-container>
-                                            <button mat-button [matMenuTriggerFor]="menu"><i class="material-icons md-30">more_vert</i></button>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/audios/'])">
+                                                <audio controls>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </audio>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/docs/'])">
+                                                <a [href]="imagePath + '/' + item.message">
+                                                    <img src="../../../../assets/doc-icons/adobe.svg" alt="Image"
+                                                        width=100px; height=100px>
+                                                    <span>
+                                                        {{ item.message.split('/')[2] }}
+                                                    </span>
+                                                </a>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="item.message.includes(['uploads/videos/'])">
+                                                <video controls width=200px; height=200px>
+                                                    <source [src]="imagePath + '/' + item.message">
+                                                </video>
+                                            </ng-container>
+
+                                            <button mat-button [matMenuTriggerFor]="menu"><i
+                                                    class="material-icons md-30">more_vert</i></button>
                                             <mat-menu #menu="matMenu">
                                                 <button mat-menu-item (click)="deleteMessage(item.id)">Delete</button>
                                             </mat-menu>
-                                            <!-- <div class="dropdown">
-                                                <button class="btn" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="true">
-                                                    <i class="material-icons md-30">more_vert</i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <button class="dropdown-item" (click)="deleteMessage(item.id)">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div> -->
-                                        </div>
-                                        <div class="sender-avatar">
-                                            {{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
                                         </div>
                                         <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>
                                     </div>
@@ -143,16 +164,33 @@
                 <div class="container">
                     <div class="col-md-18">
                         <div class="bottom">
+
                             <form class="position-relative w-100" [formGroup]="chatForm" (ngSubmit)="sendMessage()">
                                 <textarea class="form-control" formControlName="message"
-                                    placeholder="Start typing for reply..." rows="1"></textarea>
+                                    placeholder="Start typing for reply..." rows="1">
+                                </textarea>
+
                                 <button type="submit" class="btn send"><i class="material-icons">send</i></button>
+
                             </form>
+
+                            <button title="Click here to start recording action" class="btn-mic w-auto"
+                                *ngIf="!isRecording" (click)="startRecording()" style="margin-right: 3px;">
+                                <img src="../../../../assets/img/google_mic_icon.png" />
+                            </button>
+                            <button title="Click here to stop recording" class="btn-stop w-auto" *ngIf="isRecording"
+                                (click)="stopRecording()" style="margin-right: 3px;">
+                                <img src="../../../../assets/img/music_pause_sound_icon.png" />
+                            </button>
                             <label>
                                 <input type="file" (change)="uploadFile($event)">
                                 <span class="btn attach d-sm-block d-none"><i
                                         class="material-icons">attach_file</i></span>
                             </label>
+
+                            <!-- <audio #audioPlayer controls style="margin: 10px;"></audio> 
+                            <a *ngIf="audioURL" [href]="audioURL" download="recorded_audio.wav">Download last reecorded Audio</a>-->
+
                         </div>
                     </div>
                 </div>
@@ -162,3 +200,4 @@
         <!-- End of Babble -->
     </div>
 </div>
+

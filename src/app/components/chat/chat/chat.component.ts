@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -9,6 +9,8 @@ import { imagePath } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { FirebaseService } from '@core/services/firebase.service';
+import { AudioRecordingService } from '@core/services/audio-recording.service';
+import { ImagePreviewComponent } from '@components/shared/image-preview/image-preview.component';
 
 
 @Component({
@@ -20,7 +22,7 @@ import { FirebaseService } from '@core/services/firebase.service';
 export class ChatComponent implements OnInit, OnDestroy {
 
     selectedUser: any;
-    chatForm!: UntypedFormGroup;
+    chatForm!: UntypedFormGroup | any;
     receiverId: any;
     senderId: any;
     previousMsgs: any;
@@ -45,9 +47,17 @@ export class ChatComponent implements OnInit, OnDestroy {
     incomingCall: any;  // Information about incoming call
     callAccepted: boolean = false;
 
+    isRecording = false;
+    audioURL: string | null = null;
+    @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
+    @ViewChild('imageModal') imageModal: any;
 
-    constructor(private route: ActivatedRoute, private auth: AuthService,private fireService: FirebaseService,
+    recordedData: Blob | undefined;
+
+
+    constructor(private route: ActivatedRoute, private auth: AuthService, private fireService: FirebaseService,
         private commonService: CommonService, private dialog: MatDialog,
+        private AudioRecordingService: AudioRecordingService, private cd: ChangeDetectorRef,
         private formBuilder: UntypedFormBuilder) {
 
         this.socket = io(serverUrl);
@@ -55,6 +65,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.senderId = localStorage.getItem('userId');
         this.loginUser = localStorage.getItem('user_data');
         this.loginUser = JSON.parse(this.loginUser);
+
         this.commonService.userDataEmitter.subscribe((data) => {
             this.receiverId = data.id;
             this.getUser(this.receiverId)
@@ -77,6 +88,22 @@ export class ChatComponent implements OnInit, OnDestroy {
             console.log(message)
             this.getMessages();
         });
+
+
+        this.AudioRecordingService.audioBlob$.subscribe(blob => {
+            this.recordedData = blob;
+            console.log(this.recordedData);
+
+            this.audioURL = window.URL.createObjectURL(blob);
+            console.log(this.audioURL);
+
+            // console.log(this.audioPlayer);
+            // this.audioPlayer.nativeElement.src = this.audioURL;
+
+            this.cd.detectChanges();
+            this.sendMessage()
+        });
+
 
         this.socket.on('callError', (message: any) => {
             console.log('------callError---5----------' + message.message)
@@ -158,11 +185,10 @@ export class ChatComponent implements OnInit, OnDestroy {
                             element.isReceiver = true;
                             element.isSender = false;
                         }
-
-                        if (this.message.includes('uploads/file')) {
-
-                        }
                     });
+
+                    console.log(this.previousMsgs);
+
                 }
             })
     }
@@ -189,6 +215,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         var formData: any = new FormData();
         this.chatForm.controls['receiverId'].setValue(this.receiverId);
         this.chatForm.controls['senderId'].setValue(this.senderId);
+        console.log(this.chatForm);
+
         if (this.chatForm.valid) {
             if (this.chatType == 'single') {
                 endPoint = 'chat/send-message'
@@ -196,9 +224,26 @@ export class ChatComponent implements OnInit, OnDestroy {
                 formData.append("receiverId", this.receiverId);
                 formData.append("senderId", this.chatForm.value.senderId);
                 if (this.selectedFile) {
-                    formData.append("files", this.selectedFile);
+
+                    if (this.selectedFile.type.includes("image/")) {
+                        formData.append("image", this.selectedFile);
+
+                    } else if (this.selectedFile.type.includes("application/")) {
+                        formData.append("doc", this.selectedFile);
+
+                    } else if (this.selectedFile.type.includes("audio/")) {
+                        formData.append("audio", this.selectedFile);
+
+                    } else if (this.selectedFile.type.includes("video/")) {
+                        formData.append("video", this.selectedFile);
+                    }
+                }
+
+                if (this.recordedData != undefined) {
+                    formData.append("audio", this.recordedData);
                 }
             }
+
             this.auth.sendRequest('post', endPoint, formData).subscribe(
                 async (result: any) => {
                     if (result.success == false) {
@@ -223,9 +268,33 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.chatForm.controls['message'].updateValueAndValidity();
         const file: File = event.target['files'][0];
         this.selectedFile = file;
-        if (this.selectedFile) {
+
+        if (this.selectedFile.type.includes("image/")) {
             this.readFile();
+            console.log(this.imageUrl);
+            console.log(this.selectedFile);
+            
+            let dialog = this.dialog.open(ImagePreviewComponent, this.imageUrl);
+            dialog.afterClosed().subscribe(data => {
+                console.log(data);
+                
+                this.chatForm.get('message').setValue(data.message);
+                this.sendMessage();
+            })
+        } else if (this.selectedFile.type.includes("application/")) {
+            this.imageUrl = "../../../../assets/doc-icons/chat_doc_ic.png"
+            this.sendMessage();
+
+        } else if (this.selectedFile.type.includes("audio/")) {
+            this.imageUrl = "../../../../assets/img/mp3_music_icon.png"
+            this.sendMessage();
+
+        } else if (this.selectedFile.type.includes("video/")) {
+            this.imageUrl = "../../../../assets/doc-icons/video_ic_03.png"
+            this.sendMessage();
         }
+
+
     }
 
     readFile(): void {
@@ -235,6 +304,20 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.imageUrl = e.target?.result as string;
         };
         reader.readAsDataURL(this.selectedFile as Blob);
+    }
+
+    startRecording() {
+        this.chatForm.controls['message'].clearValidators();
+        this.chatForm.controls['message'].updateValueAndValidity();
+
+        this.isRecording = true;
+        let recorded = this.AudioRecordingService.startRecording();
+
+    }
+
+    stopRecording() {
+        this.isRecording = false;
+        this.AudioRecordingService.stopRecording();
     }
 
     getAllUsers() {
@@ -276,8 +359,6 @@ export class ChatComponent implements OnInit, OnDestroy {
                 })
         }
     }
-
-
 
     initiateCall(): void {
         this.callerId = this.senderId;
@@ -355,14 +436,12 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     callUser() {
         const data = {
-          from: this.senderId ,
-          to: this.receiverId,
-          signalData: 'some_signal_data' // You need to implement signaling mechanism
+            from: this.senderId,
+            to: this.receiverId,
+            signalData: 'some_signal_data' // You need to implement signaling mechanism
         };
         this.fireService.callUser(data);
-      }
-
-
+    }
 
     ngOnDestroy(): void {
         // Disconnect the socket when the component is destroyed
