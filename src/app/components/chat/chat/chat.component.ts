@@ -7,7 +7,6 @@ import { io, Socket } from "socket.io-client";
 import { serverUrl } from 'src/environments/environment';
 import { imagePath } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { FirebaseService } from '@core/services/firebase.service';
 import { AudioRecordingService } from '@core/services/audio-recording.service';
 import { ImagePreviewComponent } from '@components/shared/image-preview/image-preview.component';
@@ -178,6 +177,10 @@ export class ChatComponent implements OnInit, OnDestroy {
                     this.previousMsgs = result.messages;
 
                     this.previousMsgs.forEach((element: any) => {
+
+                        element.imageFile = element.ChatMedia.length > 0 ? element.ChatMedia[0].filePath : '';
+                        element.message = element.message == 'null' ? '' : element.message
+                        
                         if (element.senderId == this.senderId) {
                             element.isSender = true;
                             element.isReceiver = false;
@@ -186,9 +189,6 @@ export class ChatComponent implements OnInit, OnDestroy {
                             element.isSender = false;
                         }
                     });
-
-                    console.log(this.previousMsgs);
-
                 }
             })
     }
@@ -271,16 +271,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
         if (this.selectedFile.type.includes("image/")) {
             this.readFile();
-            console.log(this.imageUrl);
-            console.log(this.selectedFile);
-            
-            let dialog = this.dialog.open(ImagePreviewComponent, this.imageUrl);
-            dialog.afterClosed().subscribe(data => {
-                console.log(data);
-                
-                this.chatForm.get('message').setValue(data.message);
-                this.sendMessage();
-            })
+    
         } else if (this.selectedFile.type.includes("application/")) {
             this.imageUrl = "../../../../assets/doc-icons/chat_doc_ic.png"
             this.sendMessage();
@@ -302,8 +293,19 @@ export class ChatComponent implements OnInit, OnDestroy {
         reader.onload = (e) => {
             // Set the 'imageUrl' property with the data URL of the uploaded image
             this.imageUrl = e.target?.result as string;
+            console.log(this.imageUrl);
+            console.log(this.selectedFile);
+            
+            let dialog = this.dialog.open(ImagePreviewComponent, {data: this.imageUrl});
+            dialog.afterClosed().subscribe(data => {
+                console.log(data);
+                
+                this.chatForm.get('message').setValue(data.message);
+                this.sendMessage();
+            })
         };
         reader.readAsDataURL(this.selectedFile as Blob);
+
     }
 
     startRecording() {
@@ -314,8 +316,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         let recorded = this.AudioRecordingService.startRecording();
 
     }
-
-    stopRecording() {
+                    
+    stopRecording() { 
         this.isRecording = false;
         this.AudioRecordingService.stopRecording();
     }

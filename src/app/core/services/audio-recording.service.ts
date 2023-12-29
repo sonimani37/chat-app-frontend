@@ -23,19 +23,44 @@ export class AudioRecordingService {
 
     private async initializeMediaRecorder() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            this.mediaRecorder = new MediaRecorder(stream);
 
-            this.mediaRecorder.ondataavailable = (event: any) => this.chunks.push(event.data);
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            // console.log(devices);
+            
+            const audioInputDevices = devices.filter(device => device.kind === 'audioinput');
 
-            console.log('MediaRecorder initialized successfully');
-        } catch (error) {
-            console.error('Failed to initialize MediaRecorder:', error);
+            // console.log(audioInputDevices);
+            
+            if (audioInputDevices.length === 0) {
+                console.error('No audio input devices found on the user\'s device.');
+                // Handle this case (e.g., show a message to the user)
+            } else {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                // console.log(stream);
+    
+                this.mediaRecorder = new MediaRecorder(stream);
+                // console.log(this.mediaRecorder);
+    
+                this.mediaRecorder.ondataavailable = (event: any) => this.chunks.push(event.data);
+    
+                console.log('MediaRecorder initialized successfully');
+            }
+
+
+
+        } catch (error: any) {
+            if (error.name === 'NotAllowedError') {
+                console.error('Permission to access the microphone was denied by the user.');
+                // Handle this case (e.g., show a message to the user)
+            } else {
+                console.error('Failed to initialize MediaRecorder:', error);
+            }
         }
     }
 
     async startRecording() {
         console.log(this.audioContext);
+        await this.initializeMediaRecorder();
 
         if (this.audioContext.state === 'suspended') {
             await this.audioContext.resume();

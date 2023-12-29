@@ -11,60 +11,42 @@ export class AuthInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): any {
 
-        // const authToken = this.auth.getToken();
+        const authToken = 'Bearer ' + localStorage.getItem('token');
 
-        // if (req.url.includes('profile-photo') || req.url.includes('member-photo')) {
-        //     var authReq = req.clone({
-        //         setHeaders: {
-        //             'authorization': authToken,
-        //             'accept': 'image/webp,*/*'
-        //         },
-        //     });
-        // } else {
-        //     var authReq = req.clone({
-        //         setHeaders: {
-        //             'authorization': authToken,
-        //             'accept': 'application/json',
-        //         },
-        //     });
-        // }
+        var authReq = req.clone({
+            setHeaders: {
+                'authorization': authToken,
+                'accept': 'application/json',
+            },
+        });
 
-
-        // return next.handle(authReq).pipe(
-        //     map(this.handleData),
-        //     catchError((error: any) => {
-        //         if (error.name === 'TimeoutError') {
-        //             this.auth.timeoutErrorFlag = true;
-        //             setInterval(() => {
-        //                 this.auth.timeoutErrorFlag = false;
-        //             }, 10000);
-        //             return this.timeoutError();
-        //         }
-        //         else if (error.status == 401) {
-        //             this.auth.clearStorageLogout();
-        //         }
-        //         else if (error.status == 403) {
-        //             this.auth.clearStorageLogout();
-        //             sessionStorage.clear();
-        //             localStorage.clear();
-        //             window.location.reload();
-        //         }
-        //         else if (error.status == 400) {
-        //             return this.error400(error);
-        //         }
-        //         else {
-        //             const resData: any = error;
-        //             if (resData['success']) {
-        //                 return resData;
-        //             }
-        //             else {
-        //                 this.auth.uncaughtError = true;
-        //                 return this.serverError();
-        //             }
-        //         }
-        //         return throwError(error);
-        //     })
-        // );
+        return next.handle(authReq).pipe(
+            map(this.handleData),
+            catchError((error: any) => {
+                if (error.status == 401) {
+                    this.clearStorageLogout();
+                }
+                else if (error.status == 403) {
+                    this.clearStorageLogout();
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    window.location.reload();
+                }
+                else if (error.status == 400) {
+                    return this.error400(error);
+                }
+                else {
+                    const resData: any = error;
+                    if (resData['success']) {
+                        return resData;
+                    }
+                    else {
+                        return this.serverError();
+                    }
+                }
+                return throwError(error);
+            })
+        );
     }
 
 
@@ -96,6 +78,10 @@ export class AuthInterceptor implements HttpInterceptor {
             "code": 500,
             "message": "Something went wrong. Please try again after some time"
         }]
+    }
+
+    clearStorageLogout() {
+        localStorage.clear();
     }
 
 }

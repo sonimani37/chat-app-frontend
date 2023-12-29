@@ -8,7 +8,7 @@ import { SignInComponent } from './components/Authentication/sign-in/sign-in.com
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ChatComponent } from '@components/chat/chat/chat.component';
 import { NavbarComponent } from './components/shared/navbar/navbar.component';
 import { SidebarComponent } from './components/shared/sidebar/sidebar.component';
@@ -27,6 +27,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { FirebaseService } from '@core/services/firebase.service';
 import { CreateGroupComponent } from '@components/chat/create-group/create-group.component';
 import { MaterialModule } from '@components/shared/material.module';
+import { AuthInterceptor } from '@core/interceptor/auth-interceptor';
+import { VoiceCallComponent } from './components/voice-call/voice-call.component';
 
 initializeApp(environment.firebase);
 
@@ -54,7 +56,9 @@ initializeApp(environment.firebase);
         MyProfileComponent,
         ForgetPasswordComponent,
         ResetPasswordComponent,
-        CreateGroupComponent
+        CreateGroupComponent,
+        VoiceCallComponent,
+        
     ],
     imports: [
         BrowserModule,
@@ -74,7 +78,13 @@ initializeApp(environment.firebase);
         }),
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     ],
-    providers: [FirebaseService],
+    providers: [FirebaseService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true,
+        },],
+
     bootstrap: [AppComponent]
 })
 export class AppModule { }
