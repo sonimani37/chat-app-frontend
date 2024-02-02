@@ -20,7 +20,8 @@ export class AuthService {
 	actualSendRequest(method: any, endPoint: any, data: any) {
 		let myHeaders: any;
 		let endPointUrl: any;
-		endPointUrl = `${baseUrl}` + endPoint + ``;
+		endPointUrl = endPoint.includes('https://restcountries.com/v3.1/all') ? endPoint : `${baseUrl}` + endPoint + `` ;
+		// endPointUrl = `${baseUrl}` + endPoint + ``;
 		if (method == 'post') {
 			return this.http.post(endPointUrl, data,)
 				.pipe(
@@ -32,8 +33,7 @@ export class AuthService {
 					})
 				);
 		} else if (method == 'put') {
-			return this.http.put(endPointUrl,
-				data, { headers: myHeaders }).pipe(
+			return this.http.put(endPointUrl,data, { headers: myHeaders }).pipe(
 					map(data => {
 						return data
 					}),

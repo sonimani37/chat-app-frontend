@@ -6,7 +6,7 @@ import { io, Socket } from 'socket.io-client';
 import { serverUrl } from '@env/environment';
 // import * as SimplePeer from 'simple-peer';
 // import { SimplePeer } from 'simple-peer';
-import * as SimplePeer from 'simple-peer';
+// import * as SimplePeer from 'simple-peer';
 
 
 

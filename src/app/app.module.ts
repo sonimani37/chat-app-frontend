@@ -28,8 +28,8 @@ import { FirebaseService } from '@core/services/firebase.service';
 import { CreateGroupComponent } from '@components/chat/create-group/create-group.component';
 import { MaterialModule } from '@components/shared/material.module';
 import { AuthInterceptor } from '@core/interceptor/auth-interceptor';
-import { VoiceCallComponent } from './components/voice-call/voice-call.component';
-
+import { VoiceCallComponent } from './components/voice-call/voice-call.component'; 
+import { NgSelectModule } from '@ng-select/ng-select';
 initializeApp(environment.firebase);
 
 // // Register the service worker'/firebase-messaging-sw.js
@@ -77,6 +77,7 @@ initializeApp(environment.firebase);
             closeButton: true,
         }),
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+        NgSelectModule
     ],
     providers: [FirebaseService,
         {

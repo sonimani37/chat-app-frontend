@@ -46,6 +46,15 @@
                               </div>
                             <button type="submit" class="btn button">Sign In</button>
                             <br><br>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                  <input class="form-check-input" #remeberMe type="checkbox" value="" [checked]="checkRemember"> Remember me
+                                  <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                                </label>
+                            </div>
+                              <br><br>
                             <a  (click)="goToForgotPass()"  style = "cursor: pointer;color: blue;">
                                 Forget Password?
                             </a>

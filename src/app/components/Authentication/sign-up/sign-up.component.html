@@ -49,11 +49,21 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <select formControlName="selectedCountry" class="form-control">
-                                      <option *ngFor="let country of countries" [value]="country.phone_code" >
-                                        {{ country.flag }} {{ country.phone_code }} {{ country.name }} </option>
-                                    </select>
-                                  </div>
+                                    <ng-select [items]="countries" [bindValue]="'phone_code'" [bindLabel]="'name'"  class="form-control"
+                                         class="country-dropdown" formControlName="selectedCountry">
+                                        <ng-template ng-label-tmp let-item="item">
+                                            <img [src]="item.flag" alt="{{ item.name }}" height="20" width="30" />
+                                            {{ item.phone_code }} {{ item.name }}
+                                          </ng-template>
+
+                                          <ng-template ng-option-tmp let-item="item" let-index="index">
+                                            <img [src]="item.flag" alt="{{ item.name }}" height="20" width="30" />
+                                            {{ item.phone_code }} {{ item.name }}
+                                          </ng-template>
+
+                                     </ng-select>        
+                                </div>
+                                
                                 <div class="form-group">
                                     <input type="text" formControlName="contact" class="form-control"  placeholder="contact"/>
                                     <button class="btn icon"><i class="material-icons">person_outline</i></button>

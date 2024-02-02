@@ -23,6 +23,7 @@
       "ES2022",
       "dom"
     ],
+    "types": ["simple-peer"],
     "paths": {
       "@core/*": [
         "src/app/core/*"

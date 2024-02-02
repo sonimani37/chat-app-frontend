@@ -53,7 +53,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     recordedData: Blob | undefined;
 
-
     constructor(private route: ActivatedRoute, private auth: AuthService, private fireService: FirebaseService,
         private commonService: CommonService, private dialog: MatDialog,
         private AudioRecordingService: AudioRecordingService, private cd: ChangeDetectorRef,
@@ -284,8 +283,6 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.imageUrl = "../../../../assets/doc-icons/video_ic_03.png"
             this.sendMessage();
         }
-
-
     }
 
     readFile(): void {
@@ -364,24 +361,24 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     initiateCall(): void {
         this.callerId = this.senderId;
-        console.log('------initiateCall---1----------' + this.callerId);
+        console.log('------initiateCall---1----------' + this.callerId,this.receiverId);
         this.commonService.initiateCall(this.callerId, this.receiverId);
 
-        // Subscribe to WebRTC events
-        this.commonService.onOffer().subscribe((offer) => {
-            // Handle offer and send answer
-            this.handleOffer(offer);
-        });
+        // // Subscribe to WebRTC events
+        // this.commonService.onOffer().subscribe((offer) => {
+        //     // Handle offer and send answer
+        //     this.handleOffer(offer);
+        // });
 
-        this.commonService.onAnswer().subscribe((answer) => {
-            // Handle answer
-            this.handleAnswer(answer);
-        });
+        // this.commonService.onAnswer().subscribe((answer) => {
+        //     // Handle answer
+        //     this.handleAnswer(answer);
+        // });
 
-        this.commonService.onIncomingAudio().subscribe((stream) => {
-            // Handle incoming audio stream
-            this.handleIncomingAudio(stream);
-        });
+        // this.commonService.onIncomingAudio().subscribe((stream) => {
+        //     // Handle incoming audio stream
+        //     this.handleIncomingAudio(stream);
+        // });
     }
 
     handleOffer(offer: any): void {

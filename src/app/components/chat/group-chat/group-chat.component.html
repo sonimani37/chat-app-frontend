@@ -136,11 +136,11 @@
                             <div *ngFor="let item of previousGroupMsgs">
                                 <div class="message" *ngIf="item.isReceiver == true">
 
-                                    <img class="avatar-md" *ngIf="item?.sender.UserImages == null"
+                                    <img class="avatar-md" *ngIf="item?.sender?.UserImages == null"
                                         src="../../../../assets/img/defaultProfile.jpeg" data-toggle="tooltip"
                                         data-placement="top" title="Keith" alt="avatar">
 
-                                    <img class="avatar-md" *ngIf="item?.sender.UserImages != null"
+                                    <img class="avatar-md" *ngIf="item?.sender?.UserImages != null"
                                         [src]="getImageUrl(item?.sender?.UserImages?.filePath,'type')" data-toggle="tooltip"
                                         data-placement="top" title="Keith" alt="avatar">
 
@@ -185,7 +185,7 @@
 
                                         </div>
                                         <div class="sender-avatar">
-                                            {{item.sender.firstname.charAt(0)}}{{item.sender.lastname.charAt(0)}}
+                                            {{item.sender?.firstname.charAt(0)}}{{item.sender?.lastname.charAt(0)}}
                                         </div>
                                     </div>
                                     <span>{{ item.createdAt | date: 'dd-MM-YY' }}</span>

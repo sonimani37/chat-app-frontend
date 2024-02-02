@@ -48,14 +48,11 @@ export class ResetPasswordComponent implements OnInit {
     resetPassword() { 
         this.submitted = true;
         if(this.resetPassForm.valid){
-            this.resetPassForm.removeControl('confirmPassword');
-            console.log(this.resetPassForm.value);
-            
+            this.resetPassForm.removeControl('confirmPassword');            
             let formdata = {
                 resetToken:  this.token,
                 newPassword: this.resetPassForm.value.newPassword
             }
-            console.log(formdata);
             var endPoint = 'reset-password'
             this.auth.sendRequest('post', endPoint,formdata)
                 .subscribe((result: any) => {

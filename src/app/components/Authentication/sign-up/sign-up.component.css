@@ -3,3 +3,36 @@
     font-size: 12px;
     margin-top: 5px;
 }
+
+::ng-deep .ng-select {
+    /* padding: 0 20px 0 58px; */
+    height: 56px;
+    font-weight: 400;
+    border: 2px solid transparent;
+    background-color: #f5f5f5
+}
+
+::ng-deep .ng-dropdown-panel {
+    position: relative !important;
+}
+
+::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+    padding: 10px 10px !important;
+    background-color: #d3cfcf !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    display: flex !important;
+    border-bottom: 2px solid #acacac
+}
+
+::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option img {
+    margin-right: 15px !important;
+}
+
+::ng-deep .ng-select .ng-select-container {
+    margin: 20px 0px 20px 10px;
+}
+
+::ng-deep .ng-select .ng-clear-wrapper {
+    display: none !important;
+}

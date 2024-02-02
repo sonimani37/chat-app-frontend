@@ -1,14 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { environment } from "@env/environment"
+import { getMessaging, onMessage } from "firebase/messaging";
 import { ActivatedRoute } from '@angular/router';
 import { io, Socket } from "socket.io-client";
 import { serverUrl } from '@env/environment';
 import { Observable } from 'rxjs';
-
-import { SimplePeer } from 'simple-peer';
-
 @Injectable({
     providedIn: 'root'
 })
@@ -23,7 +19,9 @@ export class CommonService {
     fcmUrl = 'https://fcm.googleapis.com/fcm/send';
     unreadNotificationCount = 0;
     socket: Socket;
-    peer: SimplePeer | undefined;
+
+    private mediaRecorder: any;
+    private chunks: any[] = [];
 
 
     constructor(public http: HttpClient, public route: ActivatedRoute) {
@@ -141,12 +139,50 @@ export class CommonService {
     acceptCall(callerId: number, receiverId: number): void {
         console.log('-------acceptCall--2----------' + callerId, receiverId);
         this.socket.emit('acceptCall', { callerId, receiverId });
+        this.initializeMediaRecorder(callerId,receiverId);
     }
 
     endCall(callerId: number, receiverId: number): void {
         console.log('-------endCall--2----------' + callerId);
         this.socket.emit('endCall', { callerId, receiverId });
     }
+
+
+    private async initializeMediaRecorder(callerId: number, receiverId: number) {
+        console.log('innn');
+        
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            console.log(devices);
+
+            const audioInputDevices = devices.filter(device => device.kind === 'audioinput');
+            console.log(audioInputDevices);
+
+            if (audioInputDevices.length == 0) {
+                console.error('No audio input devices found on the user\'s device.');
+                // Handle this case (e.g., show a message to the user)
+            } else {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true ,video: true });
+                console.log(stream);
+    
+                this.mediaRecorder = new MediaRecorder(stream);
+                console.log(this.mediaRecorder);
+    
+                this.mediaRecorder.ondataavailable = (event: any) => this.chunks.push(event.data);
+                console.log(this.mediaRecorder);
+                console.log('MediaRecorder initialized successfully');
+            }
+
+        } catch (error: any) {
+            if (error.name === 'NotAllowedError') {
+                console.error('Permission to access the microphone was denied by the user.');
+                // Handle this case (e.g., show a message to the user)
+            } else {
+                console.error('Failed to initialize MediaRecorder:', error);
+            }
+        }
+    }
+
 
     onIncomingCall(): Observable<any> {
         return new Observable((observer) => {

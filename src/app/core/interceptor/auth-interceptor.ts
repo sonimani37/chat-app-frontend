@@ -7,7 +7,8 @@ import { catchError, map } from 'rxjs/operators';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-    constructor(private auth: AuthService) { }
+    constructor(private auth: AuthService) {         
+    }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): any {
 
@@ -20,9 +21,7 @@ export class AuthInterceptor implements HttpInterceptor {
             },
         });
 
-        return next.handle(authReq).pipe(
-            map(this.handleData),
-            catchError((error: any) => {
+        return next.handle(authReq).pipe( map(this.handleData), catchError((error: any) => {
                 if (error.status == 401) {
                     this.clearStorageLogout();
                 }
@@ -82,6 +81,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     clearStorageLogout() {
         localStorage.clear();
+        sessionStorage.clear();
     }
 
 }

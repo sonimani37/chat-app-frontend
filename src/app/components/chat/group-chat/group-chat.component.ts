@@ -69,7 +69,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
             receiverId: ['', Validators.required]
         });
 
-        this.getAllGroups()
+        this.getAllGroups();
         if (this.chatType == 'group') {
             this.socket.on('chatGroupMessage', (data) => {
                 this.getGroupMessages();
@@ -97,9 +97,7 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                 if (result.success == false) {
 
                 } else if (result.success == true) {
-                    this.selectedGroup = result.group;
-                    console.log(this.selectedGroup);
-                    
+                    this.selectedGroup = result.group;                    
                     this.receiverId = result.group.id;
                 }
             });
@@ -140,6 +138,8 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                 } else if (result.success == true) {
                     this.previousGroupMsgs = [];
                     this.previousGroupMsgs = result.messages;
+                    console.log(this.previousGroupMsgs);
+                    
                     this.previousGroupMsgs.forEach((element: any) => {
                         if (element.senderId == this.senderId) {
                             element.isSender = true;
@@ -190,10 +190,6 @@ export class GroupChatComponent implements OnInit, OnDestroy {
                     formData.append("audio", this.recordedData);
                 }
             }
-            formData.forEach((value:any,key:any) => {
-                console.log(key +'----------------' + value);
-                
-            });
             this.auth.sendRequest('post', endPoint, formData).subscribe(
                 (result: any) => {
                     if (result.success == false) {
@@ -295,16 +291,16 @@ export class GroupChatComponent implements OnInit, OnDestroy {
     deleteMessage(id: any) {
         const confirmDelete = window.confirm('Are you sure you want to delete this message?');
         if (confirmDelete) {
-            // var endPoint = 'chat/delete-message/' + id
-            // this.auth.sendRequest('delete', endPoint, null).subscribe(
-            //     (result: any) => {
-            //         result = result;
-            //         if (result.success == false) {
-            //             console.log(result);
-            //         } else if (result.success == true) {
-            //             this.getMessages();
-            //         }
-            //     })
+            var endPoint = 'group/delete-message/' + id
+            this.auth.sendRequest('delete', endPoint, null).subscribe(
+                (result: any) => {
+                    result = result;
+                    if (result.success == false) {
+                        console.log(result);
+                    } else if (result.success == true) {
+                        this.getGroupMessages();
+                    }
+                })
         }
     }
 
