@@ -7,8 +7,7 @@ import { catchError, map } from 'rxjs/operators';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-    constructor(private auth: AuthService) {         
-    }
+    constructor(private auth: AuthService) {  }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): any {
 
@@ -22,19 +21,22 @@ export class AuthInterceptor implements HttpInterceptor {
         });
 
         return next.handle(authReq).pipe( map(this.handleData), catchError((error: any) => {
+            console.log(error);
+            
                 if (error.status == 401) {
                     this.clearStorageLogout();
-                }
-                else if (error.status == 403) {
+                } else if (error.status == 403) {
                     this.clearStorageLogout();
                     sessionStorage.clear();
                     localStorage.clear();
                     window.location.reload();
-                }
-                else if (error.status == 400) {
+                }else if (error.status == 400) {
                     return this.error400(error);
-                }
-                else {
+
+                } else if (error.status == 500) {
+                    return this.error500(error);
+                    
+                }else {
                     const resData: any = error;
                     if (resData['success']) {
                         return resData;
@@ -51,6 +53,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
     /* Data handler from HTTP service  */
     handleData: any = (response: Response) => {
+        console.log(response);
+        
         const resData: Response = response;
         return resData;
     }
@@ -64,6 +68,14 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     error400(error: any) {
+        return [{
+            "success": false,
+            "code": error.status,
+            "message": error.error.message
+        }]
+    }
+
+    error500(error: any) {
         return [{
             "success": false,
             "code": error.status,

@@ -27,14 +27,14 @@ export class SignInComponent implements OnInit {
     constructor(private formBuilder: UntypedFormBuilder, private router: Router, private auth: AuthService, private commonService: CommonService,
         private route: ActivatedRoute,
         private cookieService: CookieService,
-        private toastrMessage: ToastrMessagesService,private firebaeService: FirebaseService) {
-            this.socket = io(serverUrl);
-         }
+        private toastrMessage: ToastrMessagesService, private firebaeService: FirebaseService) {
+        this.socket = io(serverUrl);
+    }
 
     ngOnInit(): void {
 
         this.signinForm = this.formBuilder.group({
-            email: ['', [Validators.required,Validators.email]],
+            email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/),]],
         });
 
@@ -57,39 +57,46 @@ export class SignInComponent implements OnInit {
             this.cookieService.set('password', this.signinForm.controls['password'].value);
         }
         this.submitted = true;
-        if(this.signinForm.valid){
-          var endPoint = 'signin'
-          this.auth.sendRequest('post', endPoint, this.signinForm.value).subscribe(
-              (result: any) => {
-                  this.response = result;
-                  if (result.success == false) {
-                    this.responseMessage = result.error;
-                    console.log(this.responseMessage);
+        if (this.signinForm.valid) {
+            var endPoint = 'signin'
+            this.auth.sendRequest('post', endPoint, this.signinForm.value)
+                .subscribe({
+                    next: (result: any) => {
+                        console.log(result);
 
-                    this.toastrMessage.showError(this.responseMessage, null);
-                  } else if (result.success == true) {
-                      this.responseMessage = result.successmessage;
-                      console.log(result);
+                        this.response = result;
+                        if (result.success == false) {
+                            this.responseMessage = result.error;
+                            console.log(this.responseMessage);
 
-                    this.toastrMessage.showSuccess(this.responseMessage, null);
-                      localStorage.setItem('token', result['token'])
-                      sessionStorage.setItem('token', result['token']);
-                      localStorage.setItem('user_data', JSON.stringify(result['user']));
-                      localStorage.setItem('userId', result['user']['id'])
-                    //   localStorage.setItem('firstname', result['user']['firstname'])
-                    //   localStorage.setItem('lastname', result['user']['lastname'])
-                    //   localStorage.setItem('email', result['user']['email'])
-                    //   localStorage.setItem('contact', result['user']['contact'])
-                      this.router.navigate(["/my-profile"]);
-                      this.signinForm.reset();
-                      this.socket.emit('status-change', { userId: result['user']['id'], status: 'online' });
-                      this.firebaeService.requestPermission({ userId: result['user']['id'] });
-                  }
-              })
+                            this.toastrMessage.showError(this.responseMessage, null);
+                        } else if (result.success == true) {
+                            this.responseMessage = result.successmessage;
+                            console.log(result);
+
+                            this.toastrMessage.showSuccess(this.responseMessage, null);
+                            localStorage.setItem('token', result['token'])
+                            sessionStorage.setItem('token', result['token']);
+                            localStorage.setItem('user_data', JSON.stringify(result['user']));
+                            localStorage.setItem('userId', result['user']['id'])
+                            //   localStorage.setItem('firstname', result['user']['firstname'])
+                            //   localStorage.setItem('lastname', result['user']['lastname'])
+                            //   localStorage.setItem('email', result['user']['email'])
+                            //   localStorage.setItem('contact', result['user']['contact'])
+                            this.router.navigate(["/my-profile"]);
+                            this.signinForm.reset();
+                            this.socket.emit('status-change', { userId: result['user']['id'], status: 'online' });
+                            this.firebaeService.requestPermission({ userId: result['user']['id'] });
+                        }
+                    },
+                    error: (error: any) => {
+                        console.log(error);
+                    }
+                })
         }
     }
 
-    goToForgotPass(){
+    goToForgotPass() {
         this.router.navigate(['/forget-password']);
     }
 }
